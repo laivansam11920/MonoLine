@@ -13,7 +13,7 @@ class GitServices:
         self.local_dir = "./temp"
         self.file_path = f"{self.local_dir}/README.md"
         self.name = Config.GITHUB_USERNAME
-        self.email = f"{self.name}@monoline.com"
+        self.email = f"{self.name}@monoline.bot"
         self.id_commit = uuid.uuid4()
 
     def git_auto(self) -> Response:
