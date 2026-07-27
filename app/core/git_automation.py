@@ -5,6 +5,8 @@ from configs import Config
 from app.core.ai_service import response_text
 import uuid
 from flask import Response
+from app.database.connect_db import db
+import time
 
 
 class GitServices:
@@ -18,6 +20,19 @@ class GitServices:
 
     def git_auto(self) -> Response:
         try:
+
+            res = db.time_limit.find_one({'username': self.name}, {'_id': 0, 'time_last_update': 1}) or {}
+            _time = time.time() - res.get("time_last_update", 0)
+
+            if _time < Config.TIME_LIMIT:
+                return Response(f'{_time}', mimetype="text/plain")
+
+            db.time_limit.update_one(
+                {"username": self.name},
+                {"$set": {"time_last_update": time.time()}},
+                upsert=True,
+            )
+
             repo = git.Repo.clone_from(self.repo_url, self.local_dir)
 
             with open(self.file_path, "w", encoding="utf-8") as f:
@@ -31,6 +46,13 @@ class GitServices:
 
             origin = repo.remote(name="origin")
             origin.push()
+
+            db.ai_res.insert_one({
+                'username': self.name,
+                'id_commit': str(self.id_commit),
+                'message': response_text,
+                'time': time.time(),
+            })
 
             print(f"success to save id {self.id_commit}", flush=True)
             return Response(response_text, mimetype="text/plain")

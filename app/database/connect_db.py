@@ -16,3 +16,5 @@ except ConnectionFailure:
     print("Error: Could not connect to the MongoDB server", flush=True)
 except Exception as e:
     print(f"An unexpected error occurred: {e}", flush=True)
+
+__all__ = ["db"]

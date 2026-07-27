@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     DB_NAME: str = Field(default="MonoLine", alias="DB_NAME")
     URI: str = Field(..., alias="MONGO_URI")
 
+    # TIME CONFIGS
+    TIME_LIMIT: int = Field(default=3600, alias="TIME_LIMIT")
+
 
 class Prompt:
     system_basic: str = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
