@@ -33,4 +33,4 @@ class GitServices:
             if os.path.exists(self.local_dir):
                 shutil.rmtree(self.local_dir)
 
-GitServices().git_auto()
+__all__ = ["GitServices"]

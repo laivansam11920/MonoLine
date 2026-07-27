@@ -34,3 +34,5 @@ class Prompt:
 
 Config = Settings()  # type: ignore
 Prompt = Prompt()
+
+__all__ = ["Config", "Prompt"]
