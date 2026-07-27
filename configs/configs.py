@@ -8,6 +8,7 @@ load_dotenv(find_dotenv(), override=True)
 BASE_DIR = Path(__file__).resolve().parent.parent
 SYSTEM_PROMPT_PATH = BASE_DIR / "system.prompt"
 
+
 class Settings(BaseSettings):
     # SERVER CONFIGS
     HOST: str = Field(default="0.0.0.0", alias="HOST")
@@ -25,12 +26,13 @@ class Settings(BaseSettings):
     GITHUB_USERNAME: str = Field(..., alias="GITHUB_USERNAME")
     GITHUB_USER_TOKEN: str = Field(..., alias="GITHUB_USER_TOKEN")
 
-    # Pydantic Config
+    # PYDANTIC CONFIGS
     model_config = SettingsConfigDict(populate_by_name=True)
 
 
 class Prompt:
     system_basic: str = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
+
 
 Config = Settings()  # type: ignore
 Prompt = Prompt()

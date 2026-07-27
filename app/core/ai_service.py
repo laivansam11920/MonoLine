@@ -16,6 +16,7 @@ class GenAIService:
             print(e, flush=True)
             return "i'm sorry"
 
+
 response_text = GenAIService().get_response()
 
 __all__ = ["response_text"]
