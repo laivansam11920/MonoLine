@@ -4,4 +4,4 @@ load_dotenv(find_dotenv(), override=True)
 
 from .configs import *
 
-__all__ = ["Config", 'Prompt']
+__all__ = ["Config", "Prompt"]
