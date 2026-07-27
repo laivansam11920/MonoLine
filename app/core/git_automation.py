@@ -22,10 +22,10 @@ class GitServices:
         try:
 
             res = db.time_limit.find_one({'username': self.name}, {'_id': 0, 'time_last_update': 1}) or {}
-            _time = time.time() - res.get("time_last_update", 0)
+            _time_cur = time.time() - res.get("time_last_update", 0)
 
-            if _time < Config.TIME_LIMIT:
-                return Response(f'{_time}', mimetype="text/plain")
+            if _time_cur < Config.TIME_LIMIT:
+                return Response(f'{_time_cur} left until the new update', mimetype="text/plain")
 
             db.time_limit.update_one(
                 {"username": self.name},
