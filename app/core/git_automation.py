@@ -2,7 +2,7 @@ import git
 import shutil
 import os
 from configs import Config
-from app.core.ai_service import GenAIService
+from app.core.ai_service import response_text
 import uuid
 
 
@@ -18,7 +18,7 @@ class GitServices:
         try:
             repo = git.Repo.clone_from(self.repo_url, self.local_dir)
             with open(self.file_path, "w", encoding="utf-8") as f:
-                f.write(str(GenAIService().get_response))
+                f.write(response_text)
             repo.index.add(["README.md"])
             repo.git.config("user.name", self.name)
             repo.git.config("user.email", self.email)
