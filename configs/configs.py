@@ -1,9 +1,12 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from dotenv import load_dotenv, find_dotenv
+from pathlib import Path
 
 load_dotenv(find_dotenv(), override=True)
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+SYSTEM_PROMPT_PATH = BASE_DIR / "system.prompt"
 
 class Settings(BaseSettings):
     # SERVER CONFIGS
@@ -27,8 +30,7 @@ class Settings(BaseSettings):
 
 
 class Prompt:
-    system_basic: str = "Hãy viết một câu duy nhất cực ngắn (dưới 20 từ) kiểu vu vơ, không đầu không cuối, như đang nhìn ra cửa sổ ngắm trời mây. Không giải thích gì thêm."
-
+    system_basic: str = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
 
 Config = Settings()  # type: ignore
 Prompt = Prompt()
