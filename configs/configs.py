@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     # PYDANTIC CONFIGS
     model_config = SettingsConfigDict(populate_by_name=True)
 
+    # DATABASE CONFIGS
+    DB_NAME: str = Field(default="MonoLine", alias="DB_NAME")
+    URI: str = Field(..., alias="MONGO_URI")
+
 
 class Prompt:
     system_basic: str = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
