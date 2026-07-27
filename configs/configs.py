@@ -27,7 +27,7 @@ class Settings(BaseSettings):
 
 
 class Prompt:
-    system_basic: str = "xin chao"
+    system_basic: str = "Hãy viết một câu duy nhất cực ngắn (dưới 20 từ) kiểu vu vơ, không đầu không cuối, như đang nhìn ra cửa sổ ngắm trời mây. Không giải thích gì thêm."
 
 
 Config = Settings()  # type: ignore

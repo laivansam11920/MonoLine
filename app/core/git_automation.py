@@ -13,6 +13,7 @@ class GitServices:
         self.file_path = f"{self.local_dir}/README.md"
         self.name = Config.GITHUB_USERNAME
         self.email = f"{self.name}@monoline.com"
+        self.id_commit = uuid.uuid4()
 
     def git_auto(self):
         try:
@@ -22,12 +23,14 @@ class GitServices:
             repo.index.add(["README.md"])
             repo.git.config("user.name", self.name)
             repo.git.config("user.email", self.email)
-            repo.index.commit(f"id: {uuid.uuid4()}")
+            repo.index.commit(f"id: {self.id_commit}")
             origin = repo.remote(name="origin")
             origin.push()
-            print("ok", flush=True)
+            print(f"success to save id {self.id_commit}", flush=True)
         except Exception as e:
-            print(e, flush=True)
+            print(f"have error: {e} to save id {self.id_commit}", flush=True)
         finally:
             if os.path.exists(self.local_dir):
                 shutil.rmtree(self.local_dir)
+
+GitServices().git_auto()
