@@ -5,6 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SYSTEM_PROMPT_PATH = BASE_DIR / "prompts/system.prompt"
 
+
 class Settings(BaseSettings):
     # SERVER CONFIGS
     HOST: str = Field(default="0.0.0.0", alias="HOST")

@@ -19,6 +19,7 @@ from app.database.connect_db import db
 from app.utils.logger import logger
 from configs import Config
 
+
 class GitServices:
     def __init__(self):
         self.repo_url = f"https://{Config.GITHUB_USER_TOKEN}@github.com/{Config.GITHUB_USERNAME}/{Config.GITHUB_USERNAME}.git"
@@ -47,7 +48,9 @@ class GitServices:
             )
 
             if change_num == 0:
-                logger.warning("Could not find <!--start--> or <!--end--> tags in README.md")
+                logger.warning(
+                    "Could not find <!--start--> or <!--end--> tags in README.md"
+                )
                 return False
 
             with open(self.file_path, "w", encoding="utf-8") as f:
@@ -65,14 +68,20 @@ class GitServices:
             logger.info(f"Successfully pushed commit ID: {self.id_commit}")
             return True
         except GitCommandError as git_err:
-            safe_err: str = str(git_err).replace(Config.GITHUB_USER_TOKEN, "ghp_github_token")
-            logger.error(f"Git operation failed for commit {self.id_commit}. Details: {safe_err}")
+            safe_err: str = str(git_err).replace(
+                Config.GITHUB_USER_TOKEN, "ghp_github_token"
+            )
+            logger.error(
+                f"Git operation failed for commit {self.id_commit}. Details: {safe_err}"
+            )
             return False
         except FileNotFoundError:
             logger.error(f"README.md not found at {self.file_path}")
             return False
         except Exception as e:
-            logger.error(f"Unexpected error during git auto-update (ID: {self.id_commit}): {e}")
+            logger.error(
+                f"Unexpected error during git auto-update (ID: {self.id_commit}): {e}"
+            )
             return False
         finally:
             if os.path.exists(self.local_dir):
@@ -95,6 +104,8 @@ class GitServices:
             }
         )
 
+        logger.info(f"Database record saved for commit ID: {self.id_commit}")
+
         return None
 
     def main(self) -> Response:
@@ -104,7 +115,8 @@ class GitServices:
 
             res = (
                 time_collection.find_one(
-                    {"username": self.name}, {"_id": 0, "time_last_update": 1, "debug": 1}
+                    {"username": self.name},
+                    {"_id": 0, "time_last_update": 1, "debug": 1},
                 )
                 or {}
             )
@@ -117,15 +129,17 @@ class GitServices:
                 return Response(
                     f"Rate limit exceeded. Please try again in {time_left} seconds",
                     mimetype="text/plain",
-                    status=429
+                    status=429,
                 )
 
             time_collection.update_one(
                 {"username": self.name},
-                {"$set": {
-                    "time_last_update": self.now,
-                    "debug": res.get("debug", False),
-                }},
+                {
+                    "$set": {
+                        "time_last_update": self.now,
+                        "debug": res.get("debug", False),
+                    }
+                },
                 upsert=True,
             )
 
@@ -133,14 +147,17 @@ class GitServices:
             bg_thread.daemon = True
             bg_thread.start()
 
-            logger.info(f"Database record saved for commit ID: {self.id_commit}")
-            return Response("Done", status=200, mimetype="text/plain")
+            return Response(
+                "Start background task...", status=200, mimetype="text/plain"
+            )
         except Exception as e:
-            logger.error(f"Internal server error in main process (ID: {self.id_commit}). Details: {e}")
+            logger.error(
+                f"Internal server error in main process (ID: {self.id_commit}). Details: {e}"
+            )
             return Response(
                 "Internal server error during the update process.",
                 status=500,
-                mimetype="text/plain"
+                mimetype="text/plain",
             )
 
 
