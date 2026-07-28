@@ -87,8 +87,10 @@ crontab -e
 
 ---
 
-## 👨‍💻 Tác giả & Giấy phép
+## 📝 Tác giả & Giấy phép
 
-*   **Tác giả:** Lại Văn Sâm
-*   **Email hệ thống bot:** `<GITHUB_USERNAME>@monoline.bot`
-*   **Giấy phép (License):** Dự án được cung cấp dưới **Giấy phép MIT (MIT License)**. Bạn có quyền tự do sử dụng, sao chép, sửa đổi, gộp, xuất bản, phân phối và thương mại hóa phần mềm này, miễn là bạn giữ lại các ghi chú bản quyền và nội dung của giấy phép đi kèm trong các bản sao.
+- **Tác giả**: Lại Văn Sâm ([samvasang1192011@gmail.com](mailto:samvasang1192011@gmail.com))
+- **Thời gian phát triển**: Tháng 7/2026
+- **Giấy phép**: MIT License
+
+---
