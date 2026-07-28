@@ -2,7 +2,7 @@ import git
 import shutil
 import os
 from configs import Config
-from app.core.ai_service import response_text
+from app.core.ai_service import ai
 import uuid
 from flask import Response
 from app.database.connect_db import db
@@ -19,7 +19,7 @@ class GitServices:
         self.name = Config.GITHUB_USERNAME
         self.email = f"{self.name}@monoline.bot"
         self.id_commit = uuid.uuid4()
-        self.ai_text = response_text
+        self.ai_text = ai.get_response
 
     def git_auto(self) -> Literal[False] | Literal[True]:
         try:

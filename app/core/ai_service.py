@@ -5,18 +5,23 @@ from configs import Config, Prompt
 class GenAIService:
     def __init__(self) -> None:
         self.client = genai.Client(api_key=Config.GENAI_API_KEY)
+        self.model = Config.MODEL_AI
 
+    def __str__(self) -> str:
+        return f"GenAIService(model='{self.model}')"
+
+    @property
     def get_response(self) -> str:
         try:
             interaction = self.client.interactions.create(
-                model=Config.MODEL_AI, input=Prompt.system_basic
+                model=self.model, input=Prompt.system_basic
             )
-            return interaction.output_text
+            return interaction.output_text #type: ignore
         except Exception as e:
             print(e, flush=True)
             return "i'm sorry"
 
 
-response_text = GenAIService().get_response()
+ai = GenAIService()
 
-__all__ = ["response_text"]
+__all__ = ["ai"]
