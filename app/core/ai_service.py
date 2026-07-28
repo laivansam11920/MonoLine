@@ -1,6 +1,6 @@
 from google import genai
 from configs import Config, Prompt
-from app.utils.logger import logger
+
 
 class GenAIService:
     def __init__(self) -> None:
@@ -22,7 +22,5 @@ class GenAIService:
             return "i'm sorry"
 
 ai = GenAIService()
-
-logger.info(ai)
 
 __all__ = ["ai"]

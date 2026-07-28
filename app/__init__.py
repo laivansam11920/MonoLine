@@ -1,6 +1,6 @@
 from flask import Flask
 from configs import Config
-from app.core.git_automation import GitServices
+from app.core.git_automation import main
 
 
 def create_app() -> Flask:
@@ -9,6 +9,6 @@ def create_app() -> Flask:
 
     @app.route("/")
     def home():
-        return GitServices().main()
+        return main.main()
 
     return app

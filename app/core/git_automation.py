@@ -132,5 +132,6 @@ class GitServices:
                 mimetype="text/plain"
             )
 
+main = GitServices()
 
-__all__ = ["GitServices"]
+__all__ = ["main"]
