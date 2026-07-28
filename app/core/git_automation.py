@@ -6,6 +6,7 @@ import time
 import uuid
 from typing import Literal
 import tempfile
+import threading
 
 # 2. Third-party
 import git
@@ -27,7 +28,9 @@ class GitServices:
         self.local_dir = tempfile.mkdtemp(prefix="monoline_")
         self.file_path = f"{self.local_dir}/README.md"
         self.ai_text = ""
+        self.now = time.time()
 
+    @property
     def git_auto(self) -> Literal[False] | Literal[True]:
         try:
 
@@ -77,6 +80,22 @@ class GitServices:
             if os.path.exists(self.local_dir):
                 shutil.rmtree(self.local_dir)
 
+    def _task_background(self) -> None:
+        if not self.git_auto:
+            logger.error(f"Git auto update failed for commit ID: {self.id_commit}")
+            return None
+
+        db.ai_res.insert_one(
+            {
+                "username": self.name,
+                "id_commit": str(self.id_commit),
+                "message": self.ai_text,
+                "time": time.time(),
+            }
+        )
+
+        return None
+
     def main(self) -> Response:
         try:
 
@@ -90,7 +109,7 @@ class GitServices:
             )
 
             last_update = res.get("time_last_update", 0)
-            time_elapsed = time.time() - last_update
+            time_elapsed = self.now - last_update
 
             if time_elapsed < Config.TIME_LIMIT:
                 time_left = round(Config.TIME_LIMIT - time_elapsed, 2)
@@ -102,25 +121,13 @@ class GitServices:
 
             time_collection.update_one(
                 {"username": self.name},
-                {"$set": {"time_last_update": time.time()}},
+                {"$set": {"time_last_update": self.now}},
                 upsert=True,
             )
 
-            if not self.git_auto():
-                return Response(
-                    "Failed to update repository: Check server logs for details.",
-                    status=500,
-                    mimetype="text/plain"
-                )
-
-            db.ai_res.insert_one(
-                {
-                    "username": self.name,
-                    "id_commit": str(self.id_commit),
-                    "message": self.ai_text,
-                    "time": time.time(),
-                }
-            )
+            bg_thread = threading.Thread(target=self._task_background)
+            bg_thread.daemon = True
+            bg_thread.start()
 
             logger.info(f"Database record saved for commit ID: {self.id_commit}")
             return Response(self.ai_text, status=200, mimetype="text/plain")
