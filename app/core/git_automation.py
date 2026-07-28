@@ -34,8 +34,6 @@ class GitServices:
     def git_auto(self) -> Literal[False] | Literal[True]:
         try:
 
-            self.ai_text = ai.get_response
-
             repo = git.Repo.clone_from(self.repo_url, self.local_dir)
 
             with open(self.file_path, "r", encoding="utf-8") as f:
@@ -81,6 +79,9 @@ class GitServices:
                 shutil.rmtree(self.local_dir)
 
     def _task_background(self) -> None:
+
+        self.ai_text = ai.get_response
+
         if not self.git_auto:
             logger.error(f"Git auto update failed for commit ID: {self.id_commit}")
             return None
