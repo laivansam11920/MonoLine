@@ -62,10 +62,10 @@ sudo systemctl enable mongod
 
 **3. Clone repo và thiết lập môi trường ảo:**
 ```bash
-git clone https://github.com/<GITHUB_USERNAME>/<TÊN_REPO>.git
-cd <TÊN_REPO>
-python3 -m venv venv
-source venv/bin/activate
+git clone https://github.com/laivansam11920/MonoLine.git
+cd MonoLine
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -91,8 +91,10 @@ crontab -e
 
 ---
 
-## 👨‍💻 Tác giả và Quyền liên quan
+## 📝 Tác giả & Giấy phép
 
-*   **Tác giả:** Lại Văn Sâm
-*   **Email hệ thống bot:** `<GITHUB_USERNAME>@monoline.bot`
-*   **Bản quyền:** Mã nguồn thuộc quyền sở hữu của tác giả. Mọi hành vi sao chép, phân phối hoặc sử dụng cho mục đích thương mại phải được sự cho phép rõ ràng bằng văn bản từ tác giả.
+- **Tác giả**: Lại Văn Sâm ([samvasang1192011@gmail.com](mailto:samvasang1192011@gmail.com))
+- **Thời gian phát triển**: Tháng 7/2026
+- **Giấy phép**: MIT License
+
+---
