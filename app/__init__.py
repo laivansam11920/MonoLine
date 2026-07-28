@@ -9,6 +9,6 @@ def create_app() -> Flask:
 
     @app.route("/")
     def home():
-        return GitServices().git_auto()
+        return GitServices().main()
 
     return app
