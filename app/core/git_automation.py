@@ -18,6 +18,7 @@ from app.database.connect_db import db
 from app.utils.logger import logger
 from configs import Config
 
+
 class GitServices:
     def __init__(self):
         self.token = Config.GITHUB_USER_TOKEN
@@ -49,7 +50,9 @@ class GitServices:
             )
 
             if change_num == 0:
-                logger.warning("Could not find <!--start--> or <!--end--> tags in README.md")
+                logger.warning(
+                    "Could not find <!--start--> or <!--end--> tags in README.md"
+                )
                 return False
 
             with open(self.file_path, "w", encoding="utf-8") as f:
@@ -68,23 +71,29 @@ class GitServices:
             return True
         except GitCommandError as git_err:
             safe_err: str = str(git_err).replace(self.token, "ghp_github_token")
-            logger.error(f"Git operation failed for commit {self.id_commit}. Details: {safe_err}")
+            logger.error(
+                f"Git operation failed for commit {self.id_commit}. Details: {safe_err}"
+            )
             return False
         except FileNotFoundError:
             logger.error(f"README.md not found at {self.file_path}")
             return False
         except Exception as e:
-            logger.error(f"Unexpected error during git auto-update (ID: {self.id_commit}): {e}")
+            logger.error(
+                f"Unexpected error during git auto-update (ID: {self.id_commit}): {e}"
+            )
             return False
         finally:
             if os.path.exists(self.local_dir):
                 shutil.rmtree(self.local_dir)
+
 
 class UpdateGitDB(GitServices):
     def __init__(self):
         super().__init__()
         self.time_collection = db.time_limit
         self.limit_time = Config.TIME_LIMIT
+        self.debug = Config.DEBUG
 
     def __repr__(self) -> str: ...
 
@@ -94,7 +103,7 @@ class UpdateGitDB(GitServices):
             res = (
                 self.time_collection.find_one(
                     {"username": self.name},
-                    {"_id": 0, "time_last_update": 1, "debug": 1}
+                    {"_id": 0, "time_last_update": 1, "debug": 1},
                 )
                 or {}
             )
@@ -103,20 +112,17 @@ class UpdateGitDB(GitServices):
             time_elapsed: float = time.time() - last_update
             debug_active: bool = res.get("debug", False)
 
-            if time_elapsed < self.limit_time and not debug_active:
+            if time_elapsed < self.limit_time and (not debug_active or not self.debug):
                 time_left: int = round(self.limit_time - time_elapsed, 2)
                 return Response(
                     f"Rate limit exceeded. Please try again in {time_left} seconds",
                     mimetype="text/plain",
-                    status=429
+                    status=429,
                 )
 
             self.time_collection.update_one(
                 {"username": self.name},
-                {"$set": {
-                    "time_last_update": time.time(),
-                    "debug": debug_active
-                }},
+                {"$set": {"time_last_update": time.time(), "debug": debug_active}},
                 upsert=True,
             )
 
@@ -124,7 +130,7 @@ class UpdateGitDB(GitServices):
                 return Response(
                     "Failed to update repository: Check server logs for details.",
                     status=500,
-                    mimetype="text/plain"
+                    mimetype="text/plain",
                 )
 
             db.ai_res.insert_one(
@@ -139,13 +145,14 @@ class UpdateGitDB(GitServices):
             logger.info(f"Database record saved for commit ID: {self.id_commit}")
             return Response(self.ai_text, status=200, mimetype="text/plain")
         except Exception as e:
-            logger.error(f"Internal server error in main process (ID: {self.id_commit}). Details: {e}")
+            logger.error(
+                f"Internal server error in main process (ID: {self.id_commit}). Details: {e}"
+            )
             return Response(
                 "Internal server error during the update process.",
                 status=500,
-                mimetype="text/plain"
+                mimetype="text/plain",
             )
-
 
 
 main = UpdateGitDB()
