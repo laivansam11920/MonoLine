@@ -94,6 +94,7 @@ class UpdateGitDB(GitServices):
         self.time_collection = db.time_limit
         self.limit_time = Config.TIME_LIMIT
         self.debug = Config.DEBUG
+        self.time = time.time()
 
     def __repr__(self) -> str: ...
 
@@ -109,7 +110,7 @@ class UpdateGitDB(GitServices):
             )
 
             last_update: int = res.get("time_last_update", 0)
-            time_elapsed: float = time.time() - last_update
+            time_elapsed: float = self.time - last_update
             debug_active: bool = res.get("debug", False)
 
             if time_elapsed < self.limit_time and (not debug_active or not self.debug):
@@ -122,7 +123,7 @@ class UpdateGitDB(GitServices):
 
             self.time_collection.update_one(
                 {"username": self.name},
-                {"$set": {"time_last_update": time.time(), "debug": debug_active}},
+                {"$set": {"time_last_update": self.time, "debug": debug_active}},
                 upsert=True,
             )
 
@@ -138,7 +139,7 @@ class UpdateGitDB(GitServices):
                     "username": self.name,
                     "id_commit": str(self.id_commit),
                     "message": self.ai_text,
-                    "time": time.time(),
+                    "time": self.time,
                 }
             )
 
