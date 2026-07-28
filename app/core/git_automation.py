@@ -5,6 +5,7 @@ import shutil
 import time
 import uuid
 from typing import Literal
+import tempfile
 
 # 2. Third-party
 import git
@@ -20,11 +21,11 @@ from configs import Config
 class GitServices:
     def __init__(self):
         self.repo_url = f"https://{Config.GITHUB_USER_TOKEN}@github.com/{Config.GITHUB_USERNAME}/{Config.GITHUB_USERNAME}.git"
-        self.local_dir = "./temp"
-        self.file_path = f"{self.local_dir}/README.md"
         self.name = Config.GITHUB_USERNAME
         self.email = f"{self.name}@monoline.bot"
         self.id_commit = uuid.uuid4()
+        self.local_dir = tempfile.mkdtemp(prefix="monoline_")
+        self.file_path = f"{self.local_dir}/README.md"
         self.ai_text = ""
 
     def git_auto(self) -> Literal[False] | Literal[True]:
@@ -38,14 +39,14 @@ class GitServices:
                 content = f.read()
 
             new_content, change_num = re.subn(
-                r"<!--start--->.*?<!--end--->",
-                f"<!--start--->\n{self.ai_text}\n<!--end--->",
+                r"<!--start-->.*?<!--end-->",
+                lambda m: f"<!--start-->\n{self.ai_text}\n<!--end-->",
                 content,
                 flags=re.DOTALL,
             )
 
             if change_num == 0:
-                logger.warning("Could not find <!--start---> or <!--end---> tags in README.md")
+                logger.warning("Could not find <!--start--> or <!--end--> tags in README.md")
                 return False
 
             with open(self.file_path, "w", encoding="utf-8") as f:
@@ -63,7 +64,8 @@ class GitServices:
             logger.info(f"Successfully pushed commit ID: {self.id_commit}")
             return True
         except GitCommandError as git_err:
-            logger.error(f"Git operation failed for commit {self.id_commit}. Details: {git_err}")
+            safe_err: str = str(git_err).replace(Config.GITHUB_USER_TOKEN, "ghp_github_token")
+            logger.error(f"Git operation failed for commit {self.id_commit}. Details: {safe_err}")
             return False
         except FileNotFoundError:
             logger.error(f"README.md not found at {self.file_path}")
