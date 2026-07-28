@@ -6,7 +6,7 @@ from pathlib import Path
 load_dotenv(find_dotenv(), override=True)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SYSTEM_PROMPT_PATH = BASE_DIR / "system.prompt"
+SYSTEM_PROMPT_PATH = BASE_DIR / "prompts/system.prompt"
 
 
 class Settings(BaseSettings):
