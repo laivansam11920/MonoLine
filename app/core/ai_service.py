@@ -2,6 +2,7 @@ from google import genai
 from configs import Config, Prompt
 
 
+
 class GenAIService:
     def __init__(self) -> None:
         self.client = genai.Client(api_key=Config.GENAI_API_KEY)
@@ -20,6 +21,7 @@ class GenAIService:
         except Exception as e:
             print(e, flush=True)
             return "i'm sorry"
+
 
 ai = GenAIService()
 

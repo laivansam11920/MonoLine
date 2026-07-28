@@ -66,9 +66,9 @@ pip install -r requirements.txt
 **3. Thiết lập cọc mốc trên GitHub:**
 Để công cụ hoạt động đúng chỗ, ông **BẮT BUỘC** phải chèn hai thẻ HTML sau vào file `README.md` trên kho lưu trữ GitHub của mình. 
 ```markdown
-<!--start--->
+<!--start-->
 Nội dung ở đây sẽ tự động bị thay thế.
-<!--end--->
+<!--end-->
 ```
 
 **4. Khởi chạy Server:**
