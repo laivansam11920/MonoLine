@@ -56,3 +56,13 @@ Tạo một file `.env` ở thư mục gốc (root directory) và định nghĩa
 Nếu bạn đưa dự án này lên các nền tảng đám mây (ví dụ như **Render.com**), **hãy nhớ KHÔNG push file `.env` lên git**. Thay vào đó, bạn phải khai báo toàn bộ các biến môi trường này (đặc biệt là GITHUB_USER_TOKEN) trực tiếp ở phần **Environment Variables (Settings)** trên bảng điều khiển (Dashboard) của dịch vụ hosting.
 
 Để duy trì vòng lặp tự động, bạn có thể thiết lập một dịch vụ cron-job (như cron-job.org) liên tục ping vào đường dẫn API chính của bạn (VD: `https://monoline.onrender.com/`) theo định kỳ (VD: 15-30 phút/lần). Hệ thống backend sẽ tự động kiểm tra biến `TIME_LIMIT` để quyết định có thực thi push code hay không.
+
+---
+
+## 📝 Tác giả & Giấy phép
+
+- **Tác giả**: Lại Văn Sâm ([samvasang1192011@gmail.com](mailto:samvasang1192011@gmail.com))
+- **Thời gian phát triển**: Tháng 7/2026
+- **Giấy phép**: MIT License
+
+---
