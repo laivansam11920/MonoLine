@@ -1,10 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-SYSTEM_PROMPT_PATH = BASE_DIR / "prompts/system.prompt"
-
+from prompts.system_prompts import sys
 
 class Settings(BaseSettings):
     # SERVER CONFIGS
@@ -35,7 +31,7 @@ class Settings(BaseSettings):
 
 
 class Prompt:
-    system_basic: str = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
+    system_basic: str = sys
 
 
 Config = Settings()  # type: ignore
