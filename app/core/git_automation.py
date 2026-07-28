@@ -19,10 +19,13 @@ class GitServices:
         self.name = Config.GITHUB_USERNAME
         self.email = f"{self.name}@monoline.bot"
         self.id_commit = uuid.uuid4()
-        self.ai_text = ai.get_response
+        self.ai_text = ""
 
     def git_auto(self) -> Literal[False] | Literal[True]:
         try:
+
+            self.ai_text = ai.get_response
+
             repo = git.Repo.clone_from(self.repo_url, self.local_dir)
 
             with open(self.file_path, "r", encoding="utf-8") as f:

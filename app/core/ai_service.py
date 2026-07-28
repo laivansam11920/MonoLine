@@ -8,7 +8,7 @@ class GenAIService:
         self.model = Config.MODEL_AI
 
     def __str__(self) -> str:
-        return f"GenAIService(model='{self.model}')"
+        return f"GenAIService(model='{Config.MODEL_AI}')"
 
     @property
     def get_response(self) -> str:
@@ -16,12 +16,13 @@ class GenAIService:
             interaction = self.client.interactions.create(
                 model=self.model, input=Prompt.system_basic
             )
-            return interaction.output_text #type: ignore
+            return interaction.output_text
         except Exception as e:
             print(e, flush=True)
             return "i'm sorry"
 
-
 ai = GenAIService()
+
+print(ai, flush=True)
 
 __all__ = ["ai"]
