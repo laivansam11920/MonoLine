@@ -134,7 +134,7 @@ class GitServices:
             bg_thread.start()
 
             logger.info(f"Database record saved for commit ID: {self.id_commit}")
-            return Response(self.ai_text, status=200, mimetype="text/plain")
+            return Response("Done", status=200, mimetype="text/plain")
         except Exception as e:
             logger.error(f"Internal server error in main process (ID: {self.id_commit}). Details: {e}")
             return Response(
