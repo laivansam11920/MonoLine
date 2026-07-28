@@ -1,15 +1,21 @@
-import git
-import shutil
+# 1. Standard Library
 import os
-from configs import Config
-from app.core.ai_service import ai
-import uuid
-from flask import Response
-from app.database.connect_db import db
-import time
 import re
+import shutil
+import time
+import uuid
 from typing import Literal
 
+# 2. Third-party
+import git
+from flask import Response
+from git.exc import GitCommandError
+
+# 3. Local/Internal
+from app.core.ai_service import ai
+from app.database.connect_db import db
+from app.utils.logger import logger
+from configs import Config
 
 class GitServices:
     def __init__(self):
@@ -39,7 +45,7 @@ class GitServices:
             )
 
             if change_num == 0:
-                print("Not found <!--start--> or <!--end-->", flush=True)
+                logger.warning("Could not find <!--start---> or <!--end---> tags in README.md")
                 return False
 
             with open(self.file_path, "w", encoding="utf-8") as f:
@@ -49,15 +55,21 @@ class GitServices:
             repo.git.config("user.email", self.email)
 
             repo.index.add(["README.md"])
-            repo.index.commit(f"id: {self.id_commit}")
+            repo.index.commit(f"Update README from AI - ID: {self.id_commit}")
 
             origin = repo.remote(name="origin")
             origin.push()
 
-            print(f"success to save push {self.id_commit}", flush=True)
+            logger.info(f"Successfully pushed commit ID: {self.id_commit}")
             return True
+        except GitCommandError as git_err:
+            logger.error(f"Git operation failed for commit {self.id_commit}. Details: {git_err}")
+            return False
+        except FileNotFoundError:
+            logger.error(f"README.md not found at {self.file_path}")
+            return False
         except Exception as e:
-            print(f"have error: {e} to push id {self.id_commit}")
+            logger.error(f"Unexpected error during git auto-update (ID: {self.id_commit}): {e}")
             return False
         finally:
             if os.path.exists(self.local_dir):
@@ -74,11 +86,16 @@ class GitServices:
                 )
                 or {}
             )
-            _time_cur = time.time() - res.get("time_last_update", 0)
 
-            if _time_cur < Config.TIME_LIMIT:
+            last_update = res.get("time_last_update", 0)
+            time_elapsed = time.time() - last_update
+
+            if time_elapsed < Config.TIME_LIMIT:
+                time_left = round(Config.TIME_LIMIT - time_elapsed, 2)
                 return Response(
-                    f"{_time_cur} left until the new update", mimetype="text/plain"
+                    f"Rate limit exceeded. Please try again in {time_left} seconds",
+                    mimetype="text/plain",
+                    status=429
                 )
 
             time_collection.update_one(
@@ -87,10 +104,12 @@ class GitServices:
                 upsert=True,
             )
 
-            if self.git_auto():
-                ...
-            else:
-                return Response("Error in doc", mimetype="text/plain")
+            if not self.git_auto():
+                return Response(
+                    "Failed to update repository: Check server logs for details.",
+                    status=500,
+                    mimetype="text/plain"
+                )
 
             db.ai_res.insert_one(
                 {
@@ -101,11 +120,15 @@ class GitServices:
                 }
             )
 
-            print(f"success to save id {self.id_commit}", flush=True)
-            return Response(self.ai_text, mimetype="text/plain")
+            logger.info(f"Database record saved for commit ID: {self.id_commit}")
+            return Response(self.ai_text, status=200, mimetype="text/plain")
         except Exception as e:
-            print(f"have error: {e} to save id {self.id_commit}", flush=True)
-            return Response("Error in server", mimetype="text/plain")
+            logger.error(f"Internal server error in main process (ID: {self.id_commit}). Details: {e}")
+            return Response(
+                "Internal server error during the update process.",
+                status=500,
+                mimetype="text/plain"
+            )
 
 
 __all__ = ["GitServices"]
