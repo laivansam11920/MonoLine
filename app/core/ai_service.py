@@ -7,7 +7,7 @@ class GenAIService:
         self.client = genai.Client(api_key=Config.GENAI_API_KEY)
         self.model = Config.MODEL_AI
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"GenAIService(model='{Config.MODEL_AI}')"
 
     @property

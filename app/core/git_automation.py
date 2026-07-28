@@ -20,13 +20,16 @@ from configs import Config
 
 class GitServices:
     def __init__(self):
-        self.repo_url = f"https://{Config.GITHUB_USER_TOKEN}@github.com/{Config.GITHUB_USERNAME}/{Config.GITHUB_USERNAME}.git"
+        self.token = Config.GITHUB_USER_TOKEN
         self.name = Config.GITHUB_USERNAME
+        self.repo_url = f"https://{self.token}@github.com/{self.name}/{self.name}.git"
         self.email = f"{self.name}@monoline.bot"
         self.id_commit = uuid.uuid4()
         self.local_dir = tempfile.mkdtemp(prefix="monoline_")
         self.file_path = f"{self.local_dir}/README.md"
         self.ai_text = ""
+
+    def __repr__(self) -> str: ...
 
     def git_auto(self) -> Literal[False] | Literal[True]:
         try:
@@ -64,7 +67,7 @@ class GitServices:
             logger.info(f"Successfully pushed commit ID: {self.id_commit}")
             return True
         except GitCommandError as git_err:
-            safe_err: str = str(git_err).replace(Config.GITHUB_USER_TOKEN, "ghp_github_token")
+            safe_err: str = str(git_err).replace(self.token, "ghp_github_token")
             logger.error(f"Git operation failed for commit {self.id_commit}. Details: {safe_err}")
             return False
         except FileNotFoundError:
@@ -77,13 +80,19 @@ class GitServices:
             if os.path.exists(self.local_dir):
                 shutil.rmtree(self.local_dir)
 
+class UpdateGitDB(GitServices):
+    def __init__(self):
+        super().__init__()
+        self.time_collection = db.time_limit
+        self.limit_time = Config.TIME_LIMIT
+
+    def __repr__(self) -> str: ...
+
     def main(self) -> Response:
         try:
 
-            time_collection = db.time_limit
-
             res = (
-                time_collection.find_one(
+                self.time_collection.find_one(
                     {"username": self.name},
                     {"_id": 0, "time_last_update": 1, "debug": 1}
                 )
@@ -94,15 +103,15 @@ class GitServices:
             time_elapsed: float = time.time() - last_update
             debug_active: bool = res.get("debug", False)
 
-            if time_elapsed < Config.TIME_LIMIT and not debug_active:
-                time_left: int = round(Config.TIME_LIMIT - time_elapsed, 2)
+            if time_elapsed < self.limit_time and not debug_active:
+                time_left: int = round(self.limit_time - time_elapsed, 2)
                 return Response(
                     f"Rate limit exceeded. Please try again in {time_left} seconds",
                     mimetype="text/plain",
                     status=429
                 )
 
-            time_collection.update_one(
+            self.time_collection.update_one(
                 {"username": self.name},
                 {"$set": {
                     "time_last_update": time.time(),
@@ -137,6 +146,8 @@ class GitServices:
                 mimetype="text/plain"
             )
 
-main = GitServices()
+
+
+main = UpdateGitDB()
 
 __all__ = ["main"]
