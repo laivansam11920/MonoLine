@@ -1,7 +1,6 @@
 from google import genai
 from configs import Config, Prompt
 
-#
 
 class GenAIService:
     def __init__(self) -> None:

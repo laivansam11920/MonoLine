@@ -9,6 +9,6 @@ def create_app() -> Flask:
 
     @app.route("/")
     def home():
-        return main.main() #
+        return main.main()
 
     return app
