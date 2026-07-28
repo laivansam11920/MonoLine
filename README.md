@@ -1,68 +1,94 @@
-# 🚀 MonoLine
+# 🤖 MonoLine GitHub Auto-Updater
 
-MonoLine là một ứng dụng máy chủ tự động cập nhật nội dung file `README.md` trên GitHub repository dựa trên sức mạnh của AI. Thay vì phải cập nhật thủ công, dự án này hoạt động bằng cách nhận một request (trigger) từ bên ngoài theo một khoảng thời gian cố định. Sau đó, server sẽ gọi AI sinh ra nội dung mới, tự động commit và push thẳng lên GitHub.
-
-Dự án được xây dựng hoàn toàn "data-driven" từ file cấu hình, không nhận bất kỳ payload nội dung nào từ external request để đảm bảo tính đóng gói và bảo mật cao.
-
----
-
-## 🏗 Cơ chế hoạt động
-
-1. **Trigger:** Một hệ thống bên ngoài (như cron job, webhook) gửi GET request tới route `/` của server.
-2. **Rate Limiting:** Server kiểm tra trong cơ sở dữ liệu MongoDB (`time_limit`). Nếu thời gian từ lần cập nhật cuối cùng nhỏ hơn `TIME_LIMIT`, server sẽ từ chối cập nhật để tránh việc spam commit.
-3. **AI Generation:** Nếu thỏa mãn điều kiện thời gian, server gọi Google GenAI API (với system prompt lấy từ file `prompts/system.prompt`) để tạo nội dung mới.
-4. **Git Automation:**
-   - Clone repository về thư mục tạm (`./temp`).
-   - Ghi đè câu nói/nội dung mới vào `README.md`.
-   - Cấu hình thông tin git với tên bot (`<username>@monoline.bot`).
-   - Tạo commit với một ID (UUID) duy nhất.
-   - Push lên origin.
-   - Xóa thư mục tạm dọn dẹp hệ thống.
-5. **Logging:** Lưu lịch sử commit (bao gồm nội dung AI sinh ra và ID) vào collection `ai_res` trong MongoDB để tiện theo dõi.
+Dự án này là một hệ thống tự động cập nhật nội dung file `README.md` trên GitHub, sử dụng sức mạnh của Google Gemini AI. 
+Hệ thống được thiết kế dưới dạng một server API (Flask). Ứng dụng hoạt động theo cơ chế nhận các HTTP request định kỳ từ bên ngoài (ví dụ: cron job mỗi giờ), sau đó gọi AI để sinh ra một nội dung mới và tự động commit, push thẳng lên repository GitHub của bạn.
 
 ---
 
-## ⚙️ Cấu hình hệ thống (Environment Variables)
+## ⚙️ Nguồn cấu hình duy nhất: Biến Môi Trường (`.env`)
 
-Vì toàn bộ hệ thống MonoLine **không nhận dữ liệu từ request bên ngoài**, nên cấu hình `.env` chính là "trái tim" của dự án. Mọi hoạt động từ kết nối database, khởi tạo AI đến thao tác git đều phụ thuộc 100% vào các biến môi trường này.
+Toàn bộ ứng dụng được điều khiển thông qua các biến môi trường được định nghĩa bằng `pydantic-settings`. Đây là **nguồn thông tin duy nhất** bạn cần cấu hình trước khi chạy hệ thống. Không hardcode bất kỳ giá trị nào vào mã nguồn!
 
-Tạo một file `.env` ở thư mục gốc (root directory) và định nghĩa các biến sau:
+Bạn cần tạo một file `.env` ở thư mục gốc của dự án và điền đầy đủ các thông tin sau:
 
-### 1. 🌐 Server Configs
-- `HOST`: Cấu hình địa chỉ IP host (Mặc định: `0.0.0.0`).
-- `PORT`: Cổng chạy server Flask (Mặc định: `2011`).
-- `DEBUG`: Bật/Tắt chế độ debug (`True` hoặc `False`).
-- `TESTING`: Bật/Tắt chế độ testing.
+| Biến | Bắt buộc | Giải thích chi tiết | Mặc định |
+|---|:---:|---|---|
+| `HOST` | | Địa chỉ IP để bind server. Thường để `0.0.0.0` để có thể nhận request từ bên ngoài. | `0.0.0.0` |
+| `PORT` | | Cổng mạng cho ứng dụng Flask chạy. | `2011` |
+| `DEBUG` | | Chế độ debug của Flask (`True` hoặc `False`). Chỉ nên bật khi đang code. | `False` |
+| `GENAI_API_KEY` | **Có** | Khóa API của Google Gemini để tạo text. Lấy từ Google AI Studio. | - |
+| `MODEL_AI` | | Tên model AI muốn sử dụng (Khuyến nghị: `gemini-1.5-flash-lite`). | `gemma-4-31b-it` |
+| `GITHUB_USERNAME` | **Có** | Tên định danh (username) tài khoản GitHub của bạn. Hệ thống dùng tên này để tạo link clone và gán tên tác giả vào lịch sử commit. | - |
+| `GITHUB_USER_TOKEN` | **Có** | **Personal Access Token (PAT)**. Đây không phải mật khẩu tài khoản! Đó là một mã thông báo bảo mật do GitHub cấp phát để ứng dụng (hoặc script) có quyền truy cập repo của bạn qua API mà không cần đăng nhập trực tiếp. *Cách lấy:* Vào GitHub -> Settings -> Developer settings -> Personal access tokens. **Lưu ý quan trọng:** Bắt buộc phải cấp quyền `repo` (Full control of private/public repositories) thì code này mới push nội dung lên kho lưu trữ được. | - |
+| `MONGO_URI` | **Có** | Chuỗi kết nối (URI) đến **MongoDB Cloud** (ví dụ: MongoDB Atlas). Hệ thống được tối ưu để không cần cài database nặng nề dưới máy cục bộ. Bạn chỉ cần tạo 1 cụm (cluster) online, lấy chuỗi URL kết nối dạng `mongodb+srv://<user>:<password>@cluster...` và dán vào đây là hệ thống tự kết nối và quản lý. | - |
+| `DB_NAME` | | Tên cơ sở dữ liệu sẽ được tạo trên MongoDB Cloud để lưu trữ thông tin log và giới hạn thời gian. | `MonoLine` |
+| `TIME_LIMIT` | | Giới hạn thời gian (rate limit) tối thiểu giữa các lần cập nhật (tính bằng giây). | `3600` (1 giờ) |
 
-### 2. 🧠 AI Configs
-- `GENAI_API_KEY` **(Bắt buộc)**: API Key của hệ sinh thái Google GenAI.
-- `MODEL_AI`: Tên mô hình AI được sử dụng để sinh text. Mặc định là `gemma-4-31b-it`. Có thể đổi sang các model khác như `gemini-3.1-flash-lite`. (Lưu ý: Prompt để điều khiển cách AI nói chuyện được lấy cố định từ `prompts/system.prompt`).
-
-### 3. 🐙 GitHub Configs (Cực kỳ lưu ý bảo mật)
-- `GITHUB_USERNAME` **(Bắt buộc)**: Tên đăng nhập GitHub (Nơi chứa repo cần cập nhật).
-- `GITHUB_USER_TOKEN` **(Bắt buộc)**: Personal Access Token (PAT) của GitHub. **Lưu ý:** Token này cần cấp đủ quyền thao tác với repository (repo permissions) để thư viện Git có thể clone, commit và push code lên. Tuyệt đối không để lộ token này!
-
-### 4. 🗄️ Database Configs (MongoDB)
-- `MONGO_URI` **(Bắt buộc)**: Chuỗi kết nối đến MongoDB (VD: `mongodb+srv://<user>:<password>@cluster...`). Dùng để lưu trữ bộ đếm thời gian và lịch sử AI text.
-- `DB_NAME`: Tên cơ sở dữ liệu sẽ sử dụng. (Mặc định: `MonoLine`).
-
-### 5. ⏳ Time Configs
-- `TIME_LIMIT`: Thời gian tối thiểu (tính bằng giây) giữa 2 lần cập nhật thành công. (Mặc định: `3600` tương đương 1 giờ). Tính năng này ngăn chặn việc endpoint bị trigger liên tục, bảo vệ tài nguyên server và tránh việc nhồi nhét commit rác lên GitHub.
+*⚠️ Lưu ý: Tuyệt đối không commit file `.env` lên GitHub để tránh lộ API Key và Token!*
 
 ---
 
-## 🚀 Hướng dẫn triển khai (Deployment)
+## 🚀 Luồng hoạt động chính (App Logic)
 
-Nếu bạn đưa dự án này lên các nền tảng đám mây (ví dụ như **Render.com**), **hãy nhớ KHÔNG push file `.env` lên git**. Thay vào đó, bạn phải khai báo toàn bộ các biến môi trường này (đặc biệt là GITHUB_USER_TOKEN) trực tiếp ở phần **Environment Variables (Settings)** trên bảng điều khiển (Dashboard) của dịch vụ hosting.
+Ứng dụng được thiết kế tối ưu và chặt chẽ qua các bước sau:
 
-Để duy trì vòng lặp tự động, bạn có thể thiết lập một dịch vụ cron-job (như cron-job.org) liên tục ping vào đường dẫn API chính của bạn (VD: `https://monoline.onrender.com/`) theo định kỳ (VD: 15-30 phút/lần). Hệ thống backend sẽ tự động kiểm tra biến `TIME_LIMIT` để quyết định có thực thi push code hay không.
+1. **Trigger từ bên ngoài:** Một hệ thống (như Cron job trên Linux, hoặc các dịch vụ trigger API miễn phí) sẽ gọi vào endpoint của server theo chu kỳ.
+2. **Kiểm tra giới hạn thời gian (Rate Limiting):** Server sẽ đối chiếu dữ liệu trong MongoDB Cloud. Nếu khoảng thời gian từ lần chạy trước đến hiện tại chưa vượt quá `TIME_LIMIT` (3600 giây), yêu cầu sẽ bị từ chối để tránh spam request làm treo bot và bị GitHub khóa.
+3. **AI Generate:** Server kết nối tới GenAI, truyền Prompt hệ thống để yêu cầu AI sinh ra một đoạn văn bản mới.
+4. **Git Auto Update (Xử lý chuỗi):** 
+   - Bot sử dụng thư viện `GitPython` kết hợp `GITHUB_USER_TOKEN` để clone repository của bạn về thư mục `./temp`.
+   - Đọc file `README.md` và dùng Biểu thức chính quy (Regex) để tìm kiếm vùng cần cập nhật nội dung, giới hạn bởi 2 thẻ `<!--start--->` và `<!--end--->`.
+   - Thay thế toàn bộ nội dung cũ ở giữa bằng đoạn văn bản AI vừa sinh ra.
+5. **Commit & Push:** Bot tự động gán tên người commit là `GITHUB_USERNAME`, email dạng `@monoline.bot`, đính kèm một mã UUID vào mô tả commit để đảm bảo tính duy nhất, sau đó push ngược code lên GitHub. Cuối cùng, thư mục `./temp` sẽ bị xóa để giải phóng bộ nhớ.
+6. **Lưu lịch sử:** Toàn bộ thông tin của phiên làm việc (Commit ID, nội dung sinh ra, mốc thời gian) được đẩy lên MongoDB Cloud để bạn tiện theo dõi sau này.
 
 ---
 
-## 📝 Tác giả & Giấy phép
+## 🛠 Hướng dẫn Cài đặt & Khởi chạy (Trên hệ điều hành Fedora)
 
-- **Tác giả**: Lại Văn Sâm ([samvasang1192011@gmail.com](mailto:samvasang1192011@gmail.com))
-- **Thời gian phát triển**: Tháng 7/2026
-- **Giấy phép**: MIT License
+Do đã sử dụng MongoDB trên Cloud, việc cài đặt môi trường giờ đây vô cùng nhanh gọn. Ông chỉ cần chuẩn bị Python và Git là đủ.
+
+**1. Cài đặt các gói cơ bản:**
+```bash
+sudo dnf update
+sudo dnf install python3 python3-pip python3-virtualenv git
+```
+
+**2. Tải mã nguồn và tạo môi trường ảo:**
+```bash
+git clone https://github.com/laivansam11920/MonoLine.git
+cd MonoLine
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+**3. Thiết lập cọc mốc trên GitHub:**
+Để công cụ hoạt động đúng chỗ, ông **BẮT BUỘC** phải chèn hai thẻ HTML sau vào file `README.md` trên kho lưu trữ GitHub của mình. 
+```markdown
+<!--start--->
+Nội dung ở đây sẽ tự động bị thay thế.
+<!--end--->
+```
+
+**4. Khởi chạy Server:**
+(Đừng quên điền thông tin vào file `.env` trước nhé).
+```bash
+python3 run.py 
+```
+
+**5. Hẹn giờ tự động chạy (Cron job):**
+Trên Fedora, ông có thể dùng crontab để bot tự động gửi request kích hoạt mỗi giờ:
+```bash
+crontab -e
+# Thêm dòng này để gọi server API cục bộ mỗi giờ:
+# 0 * * * * curl http://localhost:2011/
+```
 
 ---
+
+## 👨‍💻 Tác giả & Giấy phép
+
+*   **Tác giả:** Lại Văn Sâm
+*   **Email hệ thống bot:** `<GITHUB_USERNAME>@monoline.bot`
+*   **Giấy phép (License):** Dự án được cung cấp dưới **Giấy phép MIT (MIT License)**. Bạn có quyền tự do sử dụng, sao chép, sửa đổi, gộp, xuất bản, phân phối và thương mại hóa phần mềm này, miễn là bạn giữ lại các ghi chú bản quyền và nội dung của giấy phép đi kèm trong các bản sao.
