@@ -84,16 +84,18 @@ class GitServices:
 
             res = (
                 time_collection.find_one(
-                    {"username": self.name}, {"_id": 0, "time_last_update": 1}
+                    {"username": self.name},
+                    {"_id": 0, "time_last_update": 1, "debug": 1}
                 )
                 or {}
             )
 
-            last_update = res.get("time_last_update", 0)
-            time_elapsed = time.time() - last_update
+            last_update: int = res.get("time_last_update", 0)
+            time_elapsed: float = time.time() - last_update
+            debug_active: bool = res.get("debug", False)
 
-            if time_elapsed < Config.TIME_LIMIT:
-                time_left = round(Config.TIME_LIMIT - time_elapsed, 2)
+            if time_elapsed < Config.TIME_LIMIT and not debug_active:
+                time_left: int = round(Config.TIME_LIMIT - time_elapsed, 2)
                 return Response(
                     f"Rate limit exceeded. Please try again in {time_left} seconds",
                     mimetype="text/plain",
@@ -102,7 +104,10 @@ class GitServices:
 
             time_collection.update_one(
                 {"username": self.name},
-                {"$set": {"time_last_update": time.time()}},
+                {"$set": {
+                    "time_last_update": time.time(),
+                    "debug": debug_active
+                }},
                 upsert=True,
             )
 
