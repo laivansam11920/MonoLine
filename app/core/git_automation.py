@@ -9,7 +9,6 @@ import tempfile
 
 # 2. Third-party
 import git
-from flask import Response
 from git.exc import GitCommandError
 
 # 3. Local/Internal
@@ -98,7 +97,7 @@ class UpdateGitDB(GitServices):
 
     def __repr__(self) -> str: ...
 
-    def main(self) -> Response:
+    def main(self) -> tuple[dict, int]:
         try:
 
             self.time = time.time()
@@ -117,11 +116,11 @@ class UpdateGitDB(GitServices):
 
             if time_elapsed < self.limit_time and (not debug_active or not self.debug):
                 time_left: int = round(self.limit_time - time_elapsed, 2)
-                return Response(
-                    f"Rate limit exceeded. Please try again in {time_left} seconds",
-                    mimetype="text/plain",
-                    status=429,
-                )
+
+                return {
+                    "success": True,
+                    "msg": f"Skipped: Rate limit active ({time_left}s left)",
+                }, 200
 
             self.time_collection.update_one(
                 {"username": self.name},
@@ -130,11 +129,11 @@ class UpdateGitDB(GitServices):
             )
 
             if not self.git_auto():
-                return Response(
-                    "Failed to update repository: Check server logs for details.",
-                    status=500,
-                    mimetype="text/plain",
-                )
+
+                return {
+                    "success": False,
+                    "msg": f"Failed to update repository: Check server logs for details.",
+                }, 500
 
             db.ai_res.insert_one(
                 {
@@ -146,16 +145,17 @@ class UpdateGitDB(GitServices):
             )
 
             logger.info(f"Database record saved for commit ID: {self.id_commit}")
-            return Response(self.ai_text, status=200, mimetype="text/plain")
+
+            return {"success": True, "msg": self.ai_text}, 200
         except Exception as e:
             logger.error(
                 f"Internal server error in main process (ID: {self.id_commit}). Details: {e}"
             )
-            return Response(
-                "Internal server error during the update process.",
-                status=500,
-                mimetype="text/plain",
-            )
+
+            return {
+                "success": False,
+                "msg": "Internal server error during the update process.",
+            }, 500
 
 
 main = UpdateGitDB()

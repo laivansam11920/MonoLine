@@ -9,6 +9,7 @@ def create_app() -> Flask:
 
     @app.route("/")
     def home():
-        return main.main()
+        res, status = main.main()
+        return res.get("msg"), status
 
     return app
