@@ -95,6 +95,13 @@ class UpdateGitDB(GitServices):
         self.limit_time = Config.TIME_LIMIT
         self.debug = Config.DEBUG
         self.time = 0
+        self.time_res_db = (
+            self.time_collection.find_one(
+                {"username": self.name},
+                {"_id": 0, "time_last_update": 1, "debug": 1},
+            )
+            or {}
+        )
 
     def __repr__(self) -> str: ...
 
@@ -103,17 +110,9 @@ class UpdateGitDB(GitServices):
 
             self.time = time.time()
 
-            res = (
-                self.time_collection.find_one(
-                    {"username": self.name},
-                    {"_id": 0, "time_last_update": 1, "debug": 1},
-                )
-                or {}
-            )
-
-            last_update: int = res.get("time_last_update", 0)
+            last_update: int = self.time_res_db.get("time_last_update", 0)
             time_elapsed: float = self.time - last_update
-            debug_active: bool = res.get("debug", False)
+            debug_active: bool = self.time_res_db.get("debug", False)
 
             if time_elapsed < self.limit_time and (not debug_active or not self.debug):
                 time_left: int = round(self.limit_time - time_elapsed, 2)
