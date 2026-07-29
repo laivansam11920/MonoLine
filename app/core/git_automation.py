@@ -35,7 +35,7 @@ class GitServices:
     def git_auto(self) -> Literal[False] | Literal[True]:
         try:
 
-            self.ai_text = ai.get_response()
+            self.ai_text = ai.get_response
 
             repo = git.Repo.clone_from(self.repo_url, self.local_dir)
 
