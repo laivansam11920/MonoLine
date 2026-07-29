@@ -94,12 +94,14 @@ class UpdateGitDB(GitServices):
         self.time_collection = db.time_limit
         self.limit_time = Config.TIME_LIMIT
         self.debug = Config.DEBUG
-        self.time = time.time()
+        self.time = 0
 
     def __repr__(self) -> str: ...
 
     def main(self) -> Response:
         try:
+
+            self.time = time.time()
 
             res = (
                 self.time_collection.find_one(
