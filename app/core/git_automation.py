@@ -129,6 +129,8 @@ class UpdateGitDB(GitServices):
                 upsert=True,
             )
 
+            self.time_res_db = self.time
+
             if not self.git_auto():
 
                 return Response(
