@@ -149,7 +149,7 @@ class UpdateGitDB(GitServices):
 
             logger.info(f"Database record saved for commit ID: {self.id_commit}")
 
-            return Response(self.ai_text, mimetype="text/plain", status=200)
+            return Response("Done to update text", mimetype="text/plain", status=200)
         except Exception as e:
             logger.error(
                 f"Internal server error in main process (ID: {self.id_commit}). Details: {e}"
