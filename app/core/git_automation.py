@@ -95,14 +95,9 @@ class UpdateGitDB(GitServices):
         self.limit_time = Config.TIME_LIMIT
         self.debug = Config.DEBUG
         self.time = 0
-        self.time_res_db = (
-            self.time_collection.find_one(
-                {"username": self.name},
-                {"_id": 0, "time_last_update": 1, "debug": 1},
-            )
-            or {}
-        )
-
+        self.time_res_db = self.time_collection.find_one({"username": self.name}, {"_id": 0, "time_last_update": 1, "debug": 1})
+        if not isinstance(self.time_res_db, dict):
+            self.time_res_db = {}
     def __repr__(self) -> str: ...
 
     def main(self) -> Response:
