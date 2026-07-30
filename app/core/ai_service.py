@@ -18,7 +18,7 @@ class AIServices(ABC):
 
 class GenAIService(AIServices):
     def __init__(self) -> None:
-        super().__init__(client=genai.Client(api_key=Config.GENAI_API_KEY), model=Config.MODEL_GENAI)
+        super().__init__(client=genai.Client(api_key=Config.GENAI_API_KEY), model=Config.MODEL_GEN_AI)
 
     def __repr__(self) -> str:
         return f"<GenAIService(model={self.model})>"
@@ -36,7 +36,7 @@ class GenAIService(AIServices):
 
 class GroqAIServices(AIServices):
     def __init__(self) -> None:
-        super().__init__(client=Groq(api_key=Config.GROQ_API_KEY), model=Config.MODEL_GROQAI)
+        super().__init__(client=Groq(api_key=Config.GROQ_API_KEY), model=Config.MODEL_GROQ_AI)
         self.role = Config.ROLE_AI
 
     def __repr__(self) -> str:
