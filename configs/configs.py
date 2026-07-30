@@ -11,10 +11,15 @@ class Settings(BaseSettings):
     TESTING: bool = Field(default=False, alias="TESTING")
 
     # AI CONFIGS
+    ROLE_AI: str = Field(default="user", alias="ROLE_AI")
+    GROQ_API_KEY: str = Field(..., alias="GROQ_API_KEY")
     GENAI_API_KEY: str = Field(..., alias="GENAI_API_KEY")
-    MODEL_AI: str = Field(
-        default="gemma-4-31b-it", alias="MODEL_AI"
+    MODEL_GEN_AI: str = Field(
+        default="gemma-4-31b-it", alias="MODEL_GEN_AI"
     )  # model_suggestion: gemini-3.1-flash-lite
+    MODEL_GROQ_AI: str = Field(
+        default="llama-3.3-70b-versatile", alias="MODEL_GROQ_AI"
+    )
 
     # GITHUB CONFIGS
     GITHUB_USERNAME: str = Field(..., alias="GITHUB_USERNAME")

@@ -1,7 +1,7 @@
 from flask import Flask
 from configs import Config
 from app.core.git_automation import main
-import database.create_index
+import app.database.create_index
 
 def create_app() -> Flask:
     app = Flask(__name__)
