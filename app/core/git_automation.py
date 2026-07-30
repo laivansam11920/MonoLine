@@ -33,7 +33,6 @@ class GitServices:
 
     def __repr__(self) -> str: ...
 
-    @time_point
     def git_auto(self) -> Literal[False] | Literal[True]:
         try:
 

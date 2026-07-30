@@ -10,6 +10,6 @@ def time_point(func):
 
         ket_thuc = time()
         logger.debug(f"[{func.__name__}]: {ket_thuc - bat_dau:.4f}")
-        return ket_qua
+        return ket_qua, f"[{func.__name__}]: {ket_thuc - bat_dau:.4f}"
 
     return wrapper
