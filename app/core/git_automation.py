@@ -92,12 +92,11 @@ class UpdateGitDB(GitServices):
     def __init__(self):
         super().__init__()
         self.time_collection = db.time_limit
-        self.limit_time = Config.TIME_LIMIT
-        self.debug = Config.DEBUG
-        self.time = 0
-        self.time_res_db = self.time_collection.find_one({"username": self.name}, {"_id": 0, "time_last_update": 1, "debug": 1})
-        if not isinstance(self.time_res_db, dict):
-            self.time_res_db = {}
+        self.limit_time: float | int = Config.TIME_LIMIT
+        self.debug: bool = Config.DEBUG
+        self.time: float | int = 0
+        self.time_res_db = self.time_collection.find_one({"username": self.name}, {"_id": 0, "time_last_update": 1, "debug": 1}) or {} ######
+
     def __repr__(self) -> str: ...
 
     def main(self) -> Response:
@@ -106,11 +105,11 @@ class UpdateGitDB(GitServices):
             self.time = time.time()
 
             last_update: int = self.time_res_db.get("time_last_update", 0)
-            time_elapsed: float = self.time - last_update
             debug_active: bool = self.time_res_db.get("debug", False)
+            time_elapsed: float | int = self.time - last_update
 
             if time_elapsed < self.limit_time and (not debug_active or not self.debug):
-                time_left: int = round(self.limit_time - time_elapsed, 2)
+                time_left: float | int = round(self.limit_time - time_elapsed, 2)
 
                 return Response(
                     f"Skipped: Rate limit active ({time_left}s left)",
@@ -124,7 +123,7 @@ class UpdateGitDB(GitServices):
                 upsert=True,
             )
 
-            self.time_res_db = self.time
+            self.time_res_db: dict = {"time_last_update": self.time, "debug": debug_active}
 
             if not self.git_auto():
 
