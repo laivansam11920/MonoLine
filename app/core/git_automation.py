@@ -17,6 +17,7 @@ from app.core.ai_service import ai
 from app.database.connect_db import db
 from app.utils.logger import logger
 from configs import Config
+from app.utils.time_test import time_point
 
 
 class GitServices:
@@ -32,6 +33,7 @@ class GitServices:
 
     def __repr__(self) -> str: ...
 
+    @time_point
     def git_auto(self) -> Literal[False] | Literal[True]:
         try:
 
@@ -99,6 +101,7 @@ class UpdateGitDB(GitServices):
 
     def __repr__(self) -> str: ...
 
+    @time_point
     def main(self) -> Response:
         try:
 

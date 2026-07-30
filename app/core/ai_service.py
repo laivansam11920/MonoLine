@@ -55,7 +55,10 @@ class GroqAIServices(AIServices):
             print(e, flush=True)
             return self.error_return
 
-
-ai = GroqAIServices()
+try:
+    ai = GroqAIServices()
+except Exception as e:
+    print(e, flush=True)
+    ai = GenAIService()
 
 __all__ = ["ai"]
