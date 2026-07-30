@@ -6,6 +6,7 @@ import time
 import uuid
 from typing import Literal
 import tempfile
+import threading
 
 # 2. Third-party
 import git
@@ -96,8 +97,16 @@ class UpdateGitDB(GitServices):
         self.debug: bool = Config.DEBUG
         self.time: float | int = 0
         self.debug_active = None
+        self.success: bool = False
 
     def __repr__(self) -> str: ...
+
+    def _async_insert_log(self, data):
+        try:
+            db.ai_res.insert_one(data)
+            logger.info(f"Background database record saved for commit ID: {self.id_commit}")
+        except Exception as e:
+            logger.error(f"Error in background insert log: {e}")
 
     def main(self) -> Response:
         try:
@@ -126,19 +135,19 @@ class UpdateGitDB(GitServices):
                     status=500,
                 )
 
-            db.ai_res.insert_one(
-                {
-                    "username": self.name,
-                    "id_commit": str(self.id_commit),
-                    "message": self.ai_text,
-                    "time": self.time,
-                }
-            )
+            log_data = {
+                "username": self.name,
+                "id_commit": str(self.id_commit),
+                "message": self.ai_text,
+                "time": self.time,
+            }
 
-            logger.info(f"Database record saved for commit ID: {self.id_commit}")
+            threading.Thread(target=self._async_insert_log, args=(log_data,)).start()
 
+            self.success = True
             return Response("Done to update text", mimetype="text/plain", status=200)
         except Exception as e:
+            self.success = False
             logger.error(
                 f"Internal server error in main process (ID: {self.id_commit}). Details: {e}"
             )
@@ -149,11 +158,12 @@ class UpdateGitDB(GitServices):
                 status=500,
             )
         finally:
-            self.time_collection.update_one(
-                {"username": self.name},
-                {"$set": {"time_last_update": self.time, "debug": self.debug_active}},
-                upsert=True,
-            )
+            if self.success:
+                self.time_collection.update_one(
+                    {"username": self.name},
+                    {"$set": {"time_last_update": self.time, "debug": self.debug_active}},
+                    upsert=True,
+                )
 
 
 main = UpdateGitDB()
