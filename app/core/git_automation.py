@@ -93,7 +93,6 @@ class UpdateGitDB(GitServices):
     def __init__(self):
         super().__init__()
         self.time_collection = db.time_limit
-        self.limit_time: float | int = Config.TIME_LIMIT
         self.time: float | int = 0
         self.debug_active = None
         self.success: bool = False
@@ -118,8 +117,8 @@ class UpdateGitDB(GitServices):
 
             self.debug_active: bool = time_res_db.get("debug", False)
 
-            if time_elapsed < self.limit_time and (not self.debug_active or not Config.DEBUG):
-                time_left: float | int = round(self.limit_time - time_elapsed, 2)
+            if time_elapsed < Config.TIME_LIMIT and (not self.debug_active or not Config.DEBUG):
+                time_left: float | int = round(Config.TIME_LIMIT - time_elapsed, 0)
 
                 return Response(
                     f"Skipped: Rate limit active ({time_left}s left)",
