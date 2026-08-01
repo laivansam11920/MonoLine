@@ -112,7 +112,7 @@ class UpdateGitDB(GitServices):
             self.time = time.time()
             time_res_db = self.time_collection.find_one({"username": self.name}, {"_id": 0, "time_last_update": 1, "debug": 1}) or {}
 
-            last_update: int = time_res_db.get("time_last_update")
+            last_update: int = time_res_db.get("time_last_update", 0)
             time_elapsed: float | int = self.time - last_update
 
             self.debug_active: bool = time_res_db.get("debug", False)
