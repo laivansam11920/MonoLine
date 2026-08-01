@@ -117,7 +117,7 @@ class UpdateGitDB(GitServices):
 
             self.debug_active: bool = time_res_db.get("debug", False)
 
-            if time_elapsed < Config.TIME_LIMIT and (not self.debug_active or not Config.DEBUG):
+            if time_elapsed < Config.TIME_LIMIT and not (self.debug_active or Config.DEBUG):
                 time_left: int = int(round(Config.TIME_LIMIT - time_elapsed, 0))
 
                 return Response(
