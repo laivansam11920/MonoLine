@@ -94,7 +94,7 @@ Hoặc những câu huyền thoại:
 
 "It's okay."
 
-"Never mind."
+"Never mind"
 
 Không cần liên quan ngữ cảnh.
 
