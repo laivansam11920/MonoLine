@@ -7,6 +7,7 @@ from uuid import uuid4, UUID
 from typing import Literal
 import tempfile
 import threading
+from pathlib import Path
 
 # 2. Third-party
 import git
@@ -28,7 +29,7 @@ class GitServices:
         self.email: str = f"{self.name}@monoline.bot"
         self.id_commit: UUID = uuid4()
         self.local_dir: str = tempfile.mkdtemp(prefix="monoline_")
-        self.file_path: str = f"{self.local_dir}/README.md"
+        self.file_path: Path = Path(self.local_dir) / "README.md"
         self.ai_text: str = ""
 
     def __repr__(self) -> str: ...
@@ -36,12 +37,18 @@ class GitServices:
     def git_auto(self) -> Literal[False] | Literal[True]:
         try:
 
-            self.ai_text = ai.get_response()
-
             repo = git.Repo.clone_from(self.repo_url, self.local_dir)
 
-            with open(self.file_path, "r", encoding="utf-8") as f:
-                content = f.read()
+            if not self.file_path.is_file():
+                logger.warning(f"README.md not found at {self.file_path}")
+                return False
+
+            repo.git.config("user.name", self.name)
+            repo.git.config("user.email", self.email)
+
+            self.ai_text = ai.get_response()
+
+            content = self.file_path.read_text(encoding="utf-8")
 
             new_content, change_num = re.subn(
                 r"<!--start-->.*?<!--end-->",
@@ -56,11 +63,7 @@ class GitServices:
                 )
                 return False
 
-            with open(self.file_path, "w", encoding="utf-8") as f:
-                f.write(new_content)
-
-            repo.git.config("user.name", self.name)
-            repo.git.config("user.email", self.email)
+            self.file_path.write_text(new_content, encoding="utf-8")
 
             repo.index.add(["README.md"])
             repo.index.commit(f"Update README from AI - ID: {self.id_commit}")
