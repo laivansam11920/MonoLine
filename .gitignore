@@ -221,3 +221,4 @@ test/*
 logs/*
 !logs/.gitkeep
 
+.idea/
