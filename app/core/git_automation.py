@@ -3,7 +3,7 @@ import os
 import re
 import shutil
 import time
-import uuid
+from uuid import uuid4, UUID
 from typing import Literal
 import tempfile
 import threading
@@ -22,14 +22,14 @@ from configs import Config
 
 class GitServices:
     def __init__(self):
-        self.token = Config.GITHUB_USER_TOKEN
-        self.name = Config.GITHUB_USERNAME
-        self.repo_url = f"https://{self.token}@github.com/{self.name}/{self.name}.git"
-        self.email = f"{self.name}@monoline.bot"
-        self.id_commit = uuid.uuid4()
-        self.local_dir = tempfile.mkdtemp(prefix="monoline_")
-        self.file_path = f"{self.local_dir}/README.md"
-        self.ai_text = ""
+        self.token: str = Config.GITHUB_USER_TOKEN
+        self.name: str = Config.GITHUB_USERNAME
+        self.repo_url: str = f"https://{self.token}@github.com/{self.name}/{self.name}.git"
+        self.email: str = f"{self.name}@monoline.bot"
+        self.id_commit: UUID = uuid4()
+        self.local_dir: str = tempfile.mkdtemp(prefix="monoline_")
+        self.file_path: str = f"{self.local_dir}/README.md"
+        self.ai_text: str = ""
 
     def __repr__(self) -> str: ...
 
