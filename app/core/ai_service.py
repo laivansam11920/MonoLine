@@ -23,7 +23,6 @@ class GenAIService(AIServices):
     def __repr__(self) -> str:
         return f"<GenAIService(model={self.model})>"
 
-    @property
     def get_response(self) -> str:
         try:
             interaction = self.client.interactions.create(
@@ -42,7 +41,6 @@ class GroqAIServices(AIServices):
     def __repr__(self) -> str:
         return f"<GroqAIService(model={self.model})>"
 
-    @property
     def get_response(self) -> str:
         try:
             completion = self.client.chat.completions.create(
