@@ -117,8 +117,12 @@ class UpdateGitDB(GitServices):
 
             self.debug_active: bool = time_res_db.get("debug", False)
 
+            logger.debug(f"{last_update} ||| {time_elapsed} ||| {self.time}")
+
             if time_elapsed < Config.TIME_LIMIT and not (self.debug_active or Config.DEBUG):
                 time_left: int = int(round(Config.TIME_LIMIT - time_elapsed, 0))
+
+                logger.debug(f"Time left: {time_left}")
 
                 return Response(
                     f"Skipped: Rate limit active ({time_left}s left)",
