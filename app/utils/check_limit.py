@@ -7,7 +7,6 @@ class CheckLimit:
     def __init__(self) -> None:
         self.time_collection = db.time_limit
         self.debug_active = None
-        self.success: bool = False
 
     def check(self, now: float | int) -> tuple[bool, int]:
 
