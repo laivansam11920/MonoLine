@@ -23,3 +23,5 @@ def create_app() -> Flask:
         )
 
     return app
+
+__all__ = ["create_app"]
