@@ -25,7 +25,9 @@ class GitServices:
     def __init__(self):
         self.token: str = Config.GITHUB_USER_TOKEN
         self.name: str = Config.GITHUB_USERNAME
-        self.repo_url: str = f"https://{self.token}@github.com/{self.name}/{self.name}.git"
+        self.repo_url: str = (
+            f"https://{self.token}@github.com/{self.name}/{self.name}.git"
+        )
         self.email: str = f"{self.name}@monoline.bot"
         self.id_commit: UUID = uuid4()
         self.local_dir: str = tempfile.mkdtemp(prefix="monoline_")
@@ -105,7 +107,9 @@ class UpdateGitDB(GitServices):
     def _async_insert_log(self, data):
         try:
             db.ai_res.insert_one(data)
-            logger.info(f"Background database record saved for commit ID: {self.id_commit}")
+            logger.info(
+                f"Background database record saved for commit ID: {self.id_commit}"
+            )
         except Exception as e:
             logger.error(f"Error in background insert log: {e}")
 
@@ -113,25 +117,13 @@ class UpdateGitDB(GitServices):
         try:
 
             self.time = time.time()
-            time_res_db = self.time_collection.find_one({"username": self.name}, {"_id": 0, "time_last_update": 1, "debug": 1}) or {}
-
-            last_update: int = time_res_db.get("time_last_update", 0)
-            time_elapsed: float | int = self.time - last_update
-
-            self.debug_active: bool = time_res_db.get("debug", False)
-
-            logger.debug(f"{last_update} ||| {time_elapsed} ||| {self.time}")
-
-            if time_elapsed < Config.TIME_LIMIT and not (self.debug_active or Config.DEBUG):
-                time_left: int = int(round(Config.TIME_LIMIT - time_elapsed, 0))
-
-                logger.debug(f"Time left: {time_left}")
-
-                return Response(
-                    f"Skipped: Rate limit active ({time_left}s left)",
-                    mimetype="text/plain",
-                    status=200,
+            time_res_db = (
+                self.time_collection.find_one(
+                    {"username": self.name}, {"_id": 0, "debug": 1}
                 )
+                or {}
+            )
+            self.debug_active: bool = time_res_db.get("debug", False)
 
             if not self.git_auto():
 
@@ -167,7 +159,12 @@ class UpdateGitDB(GitServices):
             if self.success:
                 self.time_collection.update_one(
                     {"username": self.name},
-                    {"$set": {"time_last_update": self.time, "debug": self.debug_active}},
+                    {
+                        "$set": {
+                            "time_last_update": self.time,
+                            "debug": self.debug_active,
+                        }
+                    },
                     upsert=True,
                 )
 

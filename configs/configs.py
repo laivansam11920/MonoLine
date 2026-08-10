@@ -17,9 +17,7 @@ class Settings(BaseSettings):
     MODEL_GEN_AI: str = Field(
         default="gemma-4-31b-it", alias="MODEL_GEN_AI"
     )  # model_suggestion: gemini-3.1-flash-lite
-    MODEL_GROQ_AI: str = Field(
-        default="llama-3.3-70b-versatile", alias="MODEL_GROQ_AI"
-    )
+    MODEL_GROQ_AI: str = Field(default="llama-3.3-70b-versatile", alias="MODEL_GROQ_AI")
 
     # GITHUB CONFIGS
     GITHUB_USERNAME: str = Field(..., alias="GITHUB_USERNAME")
