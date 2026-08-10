@@ -11,8 +11,6 @@ from app.core.git_automation import main
 from app.utils.check_limit import limit
 
 
-
-
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -33,5 +31,6 @@ def create_app() -> Flask:
         )
 
     return app
+
 
 __all__ = ["create_app"]
