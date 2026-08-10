@@ -32,6 +32,8 @@ class Settings(BaseSettings):
 
     # TIME CONFIGS
     TIME_LIMIT: int = Field(default=3600, alias="TIME_LIMIT")
+    RATELIMITE_LIMIT: int = Field(default=500, alias="RATELIMITE_LIMIT")
+    RATELIMIT_PERIOD: str = Field(default="5h", alias="RATELIMIT_PERIOD")
 
 
 class Prompt:

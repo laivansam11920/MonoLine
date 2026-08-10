@@ -3,13 +3,16 @@ from configs import Config
 from app.core.git_automation import main
 from app.utils.check_limit import limit
 import time
+from flask_limit import RateLimiter
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config)
+    limiter = RateLimiter(app)
 
     @app.route("/")
+    @limiter.rate_limit
     def home():
 
         status, mes = limit.check(time.time())
