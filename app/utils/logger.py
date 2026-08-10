@@ -1,5 +1,6 @@
-import logging
+# 1. Standard Library
 import os
+import logging
 from logging.handlers import RotatingFileHandler
 
 log_dir = "../../logs"

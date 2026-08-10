@@ -1,7 +1,12 @@
+# 1. Standard Library
 from typing import Any, Mapping
+
+# 2. Third-party
 from pymongo import MongoClient
-from configs import Config
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
+
+# 3. Local/Internal
+from configs import Config
 
 try:
     client: MongoClient[Mapping[str, Any]] = MongoClient(

@@ -1,3 +1,4 @@
+# 1. Local/Internal
 from app.database import db
 from configs import Config
 from .logger import logger

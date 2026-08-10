@@ -1,7 +1,12 @@
-from google import genai
-from configs import Config, Prompt
-from groq import Groq
+# 1. Standard Library
 from abc import ABC, abstractmethod
+
+# 2. Third-party
+from google import genai
+from groq import Groq
+
+# 3. Local/Internal
+from configs import Config, Prompt
 
 
 class AIServices(ABC):
