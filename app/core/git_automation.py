@@ -98,7 +98,6 @@ class GitServices:
 class UpdateGitDB(GitServices):
     def __init__(self):
         super().__init__()
-        self.time_collection = db.time_limit
         self.time: float | int = 0
         self.debug_active = None
         self.success: bool = False

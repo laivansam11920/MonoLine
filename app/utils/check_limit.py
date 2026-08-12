@@ -1,5 +1,4 @@
 # 1. Local/Internal
-from app.database import db
 from configs import Config
 from .logger import logger
 
@@ -9,7 +8,6 @@ from flask import g
 
 class CheckLimit:
     def __init__(self) -> None:
-        self.time_collection = db.time_limit
         self.debug_active = None
 
     def check(self, now: float | int) -> tuple[bool, int]:
