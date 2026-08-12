@@ -19,7 +19,7 @@ from app.database.connect_db import db
 from app.utils.logger import logger
 from configs import Config
 
-__all__ = ["worker_task"]
+__all__ = ["_git_services"]
 
 
 class GitServices:
@@ -157,6 +157,4 @@ class UpdateGitDB(GitServices):
                     upsert=True,
                 )
 
-def worker_task(app_obj, limit_data):
-  with app_obj.app_context():
-    UpdateGitDB().main(limit_data)
+_git_services = UpdateGitDB()
