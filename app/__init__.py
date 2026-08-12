@@ -10,7 +10,7 @@ from configs import Config
 from app.core.git_automation import main
 from app.utils.check_limit import limit
 from app.database import db
-
+from app.utils.logger import logger
 
 def create_app() -> Flask:
     app = Flask(__name__)
@@ -20,6 +20,7 @@ def create_app() -> Flask:
     @app.before_request
     @limiter.rate_limit
     def load_time_collection_data() -> None:
+        logger.debug("Loading time collection data")
         g.limit_data = (
             db.time_limit.find_one(
                 {"username": Config.GITHUB_USERNAME},
