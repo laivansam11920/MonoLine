@@ -31,7 +31,7 @@ def create_app() -> Flask:
 
     @app.route("/")
     @limiter.rate_limit
-    def home():
+    def home() -> Response:
 
         status, mes = limit.check(time.time())
 
