@@ -29,7 +29,7 @@ class GitServices:
             f"https://{self.token}@github.com/{self.name}/{self.name}.git"
         )
         self.email: str = f"{self.name}@monoline.bot"
-        self.id_commit: UUID = uuid4()
+        self.id_commit: UUID | int = 0
         self.local_dir: str = tempfile.mkdtemp(prefix="monoline_")
         self.file_path: Path = Path(self.local_dir) / "README.md"
         self.ai_text: str = ""
@@ -68,6 +68,7 @@ class GitServices:
             self.file_path.write_text(new_content, encoding="utf-8")
 
             repo.index.add(["README.md"])
+            self.id_commit = uuid4()
             repo.index.commit(f"Update README from AI - ID: {self.id_commit}")
 
             origin = repo.remote(name="origin")
