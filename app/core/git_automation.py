@@ -115,7 +115,7 @@ class UpdateGitDB(GitServices):
         except Exception as e:
             logger.error(f"Error in background insert log: {e}")
 
-    def main(self) -> Response:
+    def main(self) -> None:
         try:
 
             self.time = time.time()
@@ -124,12 +124,8 @@ class UpdateGitDB(GitServices):
             self.debug_active: bool = time_res_db.get("debug", False)
 
             if not self.git_auto():
-
-                return Response(
-                    f"Failed to update repository: Check server logs for details.",
-                    mimetype="text/plain",
-                    status=500,
-                )
+                logger.error(f"Failed to update repository: Check server logs for details.")
+                return None
 
             log_data = {
                 "username": self.name,
@@ -141,18 +137,14 @@ class UpdateGitDB(GitServices):
             threading.Thread(target=self._async_insert_log, args=(log_data,)).start()
 
             self.success = True
-            return Response("Done to update text", mimetype="text/plain", status=200)
+            logger.info(f"Successfully update commit ID: {self.id_commit}")
+            return None
         except Exception as e:
             self.success = False
             logger.error(
                 f"Internal server error in main process (ID: {self.id_commit}). Details: {e}"
             )
-
-            return Response(
-                "Internal server error during the update process.",
-                mimetype="text/plain",
-                status=500,
-            )
+            return None
         finally:
             if self.success:
                 db.time_limit.update_one(
