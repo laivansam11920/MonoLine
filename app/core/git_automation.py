@@ -11,7 +11,7 @@ from pathlib import Path
 
 # 2. Third-party
 import git
-from flask import Response
+from flask import Response, g
 from git.exc import GitCommandError
 
 # 3. Local/Internal
@@ -118,12 +118,8 @@ class UpdateGitDB(GitServices):
         try:
 
             self.time = time.time()
-            time_res_db = (
-                self.time_collection.find_one(
-                    {"username": self.name}, {"_id": 0, "debug": 1}
-                )
-                or {}
-            )
+            time_res_db = g.limit_data
+
             self.debug_active: bool = time_res_db.get("debug", False)
 
             if not self.git_auto():

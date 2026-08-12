@@ -3,6 +3,9 @@ from app.database import db
 from configs import Config
 from .logger import logger
 
+# 2. Third-party
+from flask import g
+
 
 class CheckLimit:
     def __init__(self) -> None:
@@ -11,13 +14,7 @@ class CheckLimit:
 
     def check(self, now: float | int) -> tuple[bool, int]:
 
-        time_res_db = (
-            self.time_collection.find_one(
-                {"username": Config.GITHUB_USERNAME},
-                {"_id": 0, "time_last_update": 1, "debug": 1},
-            )
-            or {}
-        )
+        time_res_db = g.limit_data
 
         last_update: int = time_res_db.get("time_last_update", 0)
         time_elapsed: float | int = now - last_update
