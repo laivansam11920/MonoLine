@@ -20,7 +20,7 @@ from app.database.connect_db import db
 from app.utils.logger import logger
 from configs import Config
 
-__all__ = ["main"]
+__all__ = ["git_services"]
 
 
 class GitServices:
@@ -167,4 +167,4 @@ class UpdateGitDB(GitServices):
                 )
 
 
-main = UpdateGitDB()
+git_services = UpdateGitDB()

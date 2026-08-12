@@ -7,7 +7,7 @@ from flask import Flask, Response, g
 
 # 3. Local/Internal
 from configs import Config
-from app.core.git_automation import main
+from app.core.git_automation import git_services
 from app.utils.check_limit import limit
 from app.database import db
 from app.utils.logger import logger
@@ -39,7 +39,7 @@ def create_app() -> Flask:
         status, mes = limit.check(time.time())
 
         if status:
-            return main.main()
+            return git_services.main()
         return Response(
             f"Skipped: Rate limit active ({mes}s left)",
             mimetype="text/plain",
