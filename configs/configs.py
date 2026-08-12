@@ -2,6 +2,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from prompts.system_prompts import sys
 
+__all__ = ["Config", "Prompt"]
+
 
 class Settings(BaseSettings):
     # SERVER CONFIGS
@@ -40,5 +42,3 @@ class Prompt:
 
 Config = Settings()  # type: ignore
 Prompt = Prompt()
-
-__all__ = ["Config", "Prompt"]
