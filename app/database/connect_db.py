@@ -8,6 +8,8 @@ from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 # 3. Local/Internal
 from configs import Config
 
+__all__ = ["db"]
+
 try:
     client: MongoClient[Mapping[str, Any]] = MongoClient(
         Config.URI, timeoutMS=5000, serverSelectionTimeoutMS=5000, maxIdleTimeMS=45000
@@ -21,5 +23,3 @@ except ConnectionFailure:
     print("Error: Could not connect to the MongoDB server", flush=True)
 except Exception as e:
     print(f"An unexpected error occurred: {e}", flush=True)
-
-__all__ = ["db"]

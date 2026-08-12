@@ -12,6 +12,9 @@ from app.utils.check_limit import limit
 from app.database import db
 from app.utils.logger import logger
 
+__all__ = ["create_app"]
+
+
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -44,6 +47,3 @@ def create_app() -> Flask:
         )
 
     return app
-
-
-__all__ = ["create_app"]

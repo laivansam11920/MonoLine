@@ -5,6 +5,8 @@ from .logger import logger
 # 2. Third-party
 from flask import g
 
+__all__ = ["limit"]
+
 
 class CheckLimit:
     def __init__(self) -> None:
@@ -32,5 +34,3 @@ class CheckLimit:
 
 
 limit = CheckLimit()
-
-__all__ = ["limit"]

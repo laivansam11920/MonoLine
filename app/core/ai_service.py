@@ -8,6 +8,8 @@ from groq import Groq
 # 3. Local/Internal
 from configs import Config, Prompt
 
+__all__ = ["ai"]
+
 
 class AIServices(ABC):
     def __init__(self, client, model: str, prompt: str = Prompt.system_basic) -> None:
@@ -73,5 +75,3 @@ try:
 except Exception as e:
     print(e, flush=True)
     ai = GenAIService()
-
-__all__ = ["ai"]
