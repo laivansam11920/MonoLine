@@ -1,14 +1,14 @@
 # 1. Standard Library
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 # 2. Third-party
 from flask_limit import RateLimiter
 from flask import Flask, Response, g
-from concurrent.futures import ThreadPoolExecutor
 
 # 3. Local/Internal
 from configs import Config
-from app.core.git_automation import main
+from app.core.git_automation import worker_task
 from app.utils.check_limit import limit
 from app.database import db
 from app.utils.logger import logger
@@ -40,7 +40,7 @@ def create_app() -> Flask:
         status, mes = limit.check(time.time())
 
         if status:
-            ThreadPoolExecutor(max_workers=1).submit(main.main)
+            ThreadPoolExecutor(max_workers=1).submit(worker_task, app, g.limit_data)
             return Response("update in backend, check log", mimetype="text/plain", status=200)
         return Response(
             f"Skipped: Rate limit active ({mes}s left)",

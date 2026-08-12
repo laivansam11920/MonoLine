@@ -11,7 +11,6 @@ from pathlib import Path
 
 # 2. Third-party
 import git
-from flask import Response, g
 from git.exc import GitCommandError
 
 # 3. Local/Internal
@@ -20,7 +19,7 @@ from app.database.connect_db import db
 from app.utils.logger import logger
 from configs import Config
 
-__all__ = ["main"]
+__all__ = ["worker_task"]
 
 
 class GitServices:
@@ -115,11 +114,11 @@ class UpdateGitDB(GitServices):
         except Exception as e:
             logger.error(f"Error in background insert log: {e}")
 
-    def main(self) -> None:
+    def main(self, limit_data) -> None:
         try:
 
             self.time = time.time()
-            time_res_db = g.limit_data
+            time_res_db = limit_data
 
             self.debug_active: bool = time_res_db.get("debug", False)
 
@@ -158,5 +157,6 @@ class UpdateGitDB(GitServices):
                     upsert=True,
                 )
 
-
-main = UpdateGitDB()
+def worker_task(app_obj, limit_data):
+  with app_obj.app_context():
+    UpdateGitDB().main(limit_data)
