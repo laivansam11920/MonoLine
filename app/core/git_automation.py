@@ -153,7 +153,7 @@ class UpdateGitDB(GitServices):
             )
         finally:
             if self.success:
-                self.time_collection.update_one(
+                db.time_limit.update_one(
                     {"username": self.name},
                     {
                         "$set": {
