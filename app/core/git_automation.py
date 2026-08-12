@@ -69,7 +69,7 @@ class GitServices:
 
             repo.index.add(["README.md"])
             self.id_commit = uuid4()
-            repo.index.commit(f"Update README from AI - ID: {self.id_commit}")
+            repo.index.commit(f"Id: {self.id_commit}")
 
             origin = repo.remote(name="origin")
             origin.push()
