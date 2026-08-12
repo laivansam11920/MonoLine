@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     GENAI_API_KEY: str = Field(..., alias="GENAI_API_KEY")
     MODEL_GEN_AI: str = Field(default="gemma-4-31b-it", alias="MODEL_GEN_AI")
     MODEL_GROQ_AI: str = Field(default="llama-3.3-70b-versatile", alias="MODEL_GROQ_AI")
+    RES_DEFAULT: str = Field(default="i'm sorry", alias="RES_DEFAULT")
 
     # GITHUB CONFIGS
     GITHUB_USERNAME: str = Field(..., alias="GITHUB_USERNAME")

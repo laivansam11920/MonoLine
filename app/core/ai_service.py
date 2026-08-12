@@ -1,5 +1,6 @@
 # 1. Standard Library
 from abc import ABC, abstractmethod
+from typing import Any
 
 # 2. Third-party
 from google import genai
@@ -13,10 +14,10 @@ __all__ = ["ai"]
 
 class AIServices(ABC):
     def __init__(self, client, model: str, prompt: str = Prompt.system_basic) -> None:
-        self.client = client
-        self.model = model
-        self.prompt = prompt
-        self.error_return = "i'm sorry"
+        self.client: Any = client
+        self.model: str = model
+        self.prompt: str = prompt
+        self.error_return: str = Config.RES_DEFAULT
 
     @abstractmethod
     def __repr__(self) -> str:
@@ -52,7 +53,7 @@ class GroqAIServices(AIServices):
         super().__init__(
             client=Groq(api_key=Config.GROQ_API_KEY), model=Config.MODEL_GROQ_AI
         )
-        self.role = Config.ROLE_AI
+        self.role: str = Config.ROLE_AI
 
     def __repr__(self) -> str:
         return f"<GroqAIService(model={self.model})>"
