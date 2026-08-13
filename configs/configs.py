@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
-from prompts.system_prompts import sys
+from prompts.system_prompts import SYSTEM_PROMPT
 
 __all__ = ["Config", "Prompt"]
 
@@ -38,7 +38,7 @@ class Settings(BaseSettings):
 
 
 class Prompt:
-    system_basic: str = sys
+    system_basic: str = SYSTEM_PROMPT
 
 
 Config = Settings()  # type: ignore
