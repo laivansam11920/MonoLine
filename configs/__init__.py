@@ -1,7 +1,9 @@
 from dotenv import load_dotenv, find_dotenv
+from app.utils.logger import logger
 
 __all__ = ["Config", "Prompt"]
 
-load_dotenv(find_dotenv(), override=True)
+if not load_dotenv(find_dotenv(), override=True):
+    logger.critical("NO .ENV FILE FOUND")
 
-from .configs import *
+from .configs import Config, Prompt
