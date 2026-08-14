@@ -12,7 +12,7 @@ class CheckLimit:
     def __init__(self) -> None:
         self.debug_active = None
 
-    def check(self, now: float | int, /) -> tuple[bool, int]:
+    def check(self, now: float | int) -> tuple[bool, int]:
 
         time_res_db = g.limit_data
 
