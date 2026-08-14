@@ -101,7 +101,6 @@ class UpdateGitDB(GitServices):
     def __init__(self):
         super().__init__()
         self.time: float | int = 0
-        self.debug_active = None
         self.success: bool = False
 
     def __repr__(self) -> str: ...
@@ -119,9 +118,6 @@ class UpdateGitDB(GitServices):
         try:
 
             self.time = time.time()
-            time_res_db = g.limit_data
-
-            self.debug_active: bool = time_res_db.get("debug", False)
 
             if not self.git_auto():
 
@@ -160,7 +156,7 @@ class UpdateGitDB(GitServices):
                     {
                         "$set": {
                             "time_last_update": self.time,
-                            "debug": self.debug_active,
+                            "debug": g.limit_data.get("debug", False),
                         }
                     },
                     upsert=True,
