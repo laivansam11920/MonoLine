@@ -105,7 +105,7 @@ class UpdateGitDB(GitServices):
 
     def __repr__(self) -> str: ...
 
-    def _async_insert_log(self, data):
+    def _async_insert_log(self, data: dict[str, str | float | int]):
         try:
             db.ai_res.insert_one(data)
             logger.info(
