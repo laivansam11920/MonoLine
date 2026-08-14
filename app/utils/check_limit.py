@@ -5,6 +5,9 @@ from .logger import logger
 # 2. Third-party
 from flask import g
 
+# 3. Standard Library
+import time
+
 __all__ = ["limit"]
 
 
@@ -12,7 +15,7 @@ class CheckLimit:
     def __init__(self) -> None:
         self.debug_active = None
 
-    def check(self, now: float | int) -> tuple[bool, int]:
+    def check(self, now: float | int = time.time()) -> tuple[bool, int]:
 
         time_res_db = g.limit_data
 
