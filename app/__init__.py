@@ -36,7 +36,7 @@ def create_app() -> Flask:
     @limiter.rate_limit
     def home() -> Response:
 
-        status, mes = limit.check(time.time())
+        status, mes = limit.check(now=time.time())
 
         if status:
             return git_services.main()
