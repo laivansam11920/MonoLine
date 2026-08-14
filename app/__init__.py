@@ -9,6 +9,9 @@ from app.utils.check_limit import limit
 from app.database import db
 from app.utils.logger import logger
 
+# 3. Standard Library
+import time
+
 __all__ = ["create_app"]
 
 
@@ -33,7 +36,7 @@ def create_app() -> Flask:
     @limiter.rate_limit
     def home() -> Response:
 
-        status, mes = limit.check()
+        status, mes = limit.check(time.time())
 
         if status:
             return git_services.main()
