@@ -16,7 +16,7 @@ from git.exc import GitCommandError
 
 # 3. Local/Internal
 from app.core.ai_service import ai
-from app.database.connect_db import db
+from app.database import db
 from app.utils.logger import logger
 from configs import Config
 
