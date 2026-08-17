@@ -75,6 +75,7 @@ class GroqAIServices(AIServices):
                 {"role": "user", "content": "Nói gì đó đi"}
             ],
             temperature=Config.TEMPERATURE,
+            reasoning_effort="low"
         )
         return completion.choices[0].message.content
 
