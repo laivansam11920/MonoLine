@@ -8,14 +8,15 @@ from google.genai import types
 from groq import Groq
 
 # 3. Local/Internal
-from configs import Config, Prompt
+from configs import Config
 from app.utils.logger import logger
+from prompts.Prompts import SYSTEM_PROMPT
 
 __all__ = ["ai"]
 
 
 class AIServices(ABC):
-    def __init__(self, client: Any, model: str, prompt: str = Prompt.system_basic) -> None:
+    def __init__(self, client: Any, model: str, prompt: str = SYSTEM_PROMPT) -> None:
         self.client: Any = client
         self.model: str = model
         self.prompt: str = prompt

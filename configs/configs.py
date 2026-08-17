@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 from prompts.system_prompts import SYSTEM_PROMPT
 
-__all__ = ["Config", "Prompt"]
+__all__ = ["Config"]
 
 
 class Settings(BaseSettings):
@@ -40,9 +40,4 @@ class Settings(BaseSettings):
     RATELIMIT_PERIOD: str = Field(default="5h", alias="RATELIMIT_PERIOD")
 
 
-class Prompt:
-    system_basic: str = SYSTEM_PROMPT
-
-
 Config = Settings()  # type: ignore
-Prompt = Prompt()
