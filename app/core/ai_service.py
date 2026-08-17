@@ -9,6 +9,7 @@ from groq import Groq
 
 # 3. Local/Internal
 from configs import Config, Prompt
+from app.utils.logger import logger
 
 __all__ = ["ai"]
 
@@ -81,6 +82,6 @@ class GroqAIServices(AIServices):
 try:
     ai = GroqAIServices()
 except Exception as e:
-    print(e, flush=True)
+    logger.error(e)
     ai = GenAIService()
 
