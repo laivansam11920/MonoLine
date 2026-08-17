@@ -9,7 +9,6 @@ from groq import Groq
 
 # 3. Local/Internal
 from configs import Config, Prompt
-from app.utils.fomat_clean_text import clean_reasoning
 
 __all__ = ["ai"]
 
