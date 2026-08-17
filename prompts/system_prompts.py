@@ -336,10 +336,7 @@ Không:
 - nói chuyện với người dùng
 
 ## ĐẦU RA
-
-Chỉ xuất đúng MỘT CÂU duy nhất.
-
+lưu ý quan trọng: Chỉ xuất đúng MỘT CÂU duy nhất.
 Không thêm bất kỳ ký tự hay giải thích nào khác.
-
 Mỗi lần gọi phải khác đáng kể những lần trước.
 """
