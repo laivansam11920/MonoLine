@@ -13,7 +13,7 @@ __all__ = ["ai"]
 
 
 class AIServices(ABC):
-    def __init__(self, client, model: str, prompt: str = Prompt.system_basic) -> None:
+    def __init__(self, client: Any, model: str, prompt: str = Prompt.system_basic) -> None:
         self.client: Any = client
         self.model: str = model
         self.prompt: str = prompt
@@ -59,17 +59,13 @@ class GroqAIServices(AIServices):
         return f"<GroqAIService(model={self.model})>"
 
     def get_response(self) -> str:
-        try:
-            completion = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": self.role, "content": self.prompt}],
-                temperature=0.7,
-            )
-            return completion.choices[0].message.content
-        except Exception as e:
-            print(e, flush=True)
-            return self.error_return
 
+        completion = self.client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": self.role, "content": self.prompt}],
+            temperature=0.7,
+        )
+        return completion.choices[0].message.content
 
 try:
     ai = GroqAIServices()

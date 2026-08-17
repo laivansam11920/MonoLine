@@ -23,7 +23,7 @@ def create_app() -> Flask:
     @app.before_request
     @limiter.rate_limit
     def load_time_collection_data() -> None:
-        logger.debug("Loading time collection data")
+
         g.limit_data = (
             db.time_limit.find_one(
                 {"username": Config.GITHUB_USERNAME},
