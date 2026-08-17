@@ -73,8 +73,7 @@ class GitServices:
             self.id_commit = uuid4()
             repo.index.commit(f"Id: {self.id_commit}")
 
-            origin = repo.remote(name="origin")
-            origin.push()
+            repo.remote(name="origin").push()
 
             logger.info(f"Successfully pushed commit ID: {self.id_commit}")
             return True
