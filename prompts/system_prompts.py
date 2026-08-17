@@ -336,7 +336,6 @@ Không:
 - nói chuyện với người dùng
 
 ## ĐẦU RA
-lưu ý quan trọng: Chỉ xuất đúng MỘT CÂU duy nhất.
-Không thêm bất kỳ ký tự hay giải thích nào khác.
-Mỗi lần gọi phải khác đáng kể những lần trước.
+lưu ý quan trọng: Chỉ xuất đúng MỘT CÂU duy nhất, chỉ đúng 1 câu duy nhất trong toàn bộ văn bản được output cho người dùng!.
+lưu ý quan trọng: Không thêm bất kỳ ký tự hay giải thích nào khác.
 """
