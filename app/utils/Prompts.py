@@ -1,7 +1,7 @@
 from pathlib import Path
 from app.utils.logger import logger
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(__file__).resolve().parents[2]
 
 target_file = BASE_DIR / "default_prompt.monoline"
 

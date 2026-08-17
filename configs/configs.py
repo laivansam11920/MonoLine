@@ -1,6 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
-from prompts.system_prompts import SYSTEM_PROMPT
 
 __all__ = ["Config"]
 

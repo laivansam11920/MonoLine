@@ -10,7 +10,7 @@ from groq import Groq
 # 3. Local/Internal
 from configs import Config
 from app.utils.logger import logger
-from prompts.Prompts import SYSTEM_PROMPT
+from app.utils.Prompts import SYSTEM_PROMPT
 
 __all__ = ["ai"]
 
