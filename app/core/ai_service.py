@@ -9,6 +9,7 @@ from groq import Groq
 
 # 3. Local/Internal
 from configs import Config, Prompt
+from app.utils.fomat_clean_text import clean_reasoning
 
 __all__ = ["ai"]
 
@@ -74,13 +75,12 @@ class GroqAIServices(AIServices):
                 {"role": "user", "content": "Nói gì đó đi"}
             ],
             temperature=Config.TEMPERATURE,
-            max_tokens=Config.TOKEN_MAX_GROQ_AI,
-            stop=["\n", "Here's", "Thinking"],
         )
         return completion.choices[0].message.content
 
 try:
-    ai = GenAIService()
+    ai = GroqAIServices()
 except Exception as e:
     print(e, flush=True)
+    ai = GenAIService()
 

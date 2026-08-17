@@ -5,4 +5,6 @@ Không giải thích, không dùng markdown, không dùng tiêu đề.
 Cảm giác tạo ra: status Facebook 2016, caption Instagram, lời nói vu vơ khi nhìn cửa sổ.
 Nội dung: thời tiết, mây, mưa, gió, cảm xúc ngẫu nhiên, hoặc vô nghĩa.
 Chỉ xuất đúng 1 câu duy nhất.
+/no_think
+Do not output any reasoning, thinking process, or <think> tags. Output only the final response directly.
 """
