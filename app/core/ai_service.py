@@ -63,7 +63,8 @@ class GroqAIServices(AIServices):
         completion = self.client.chat.completions.create(
             model=self.model,
             messages=[{"role": self.role, "content": self.prompt}],
-            temperature=0.7,
+            temperature=Config.TEMPERATURE,
+            max_tokens=Config.TOKEN_MAX_GROQ_AI,
         )
         return completion.choices[0].message.content
 

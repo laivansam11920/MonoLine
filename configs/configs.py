@@ -18,7 +18,9 @@ class Settings(BaseSettings):
     GENAI_API_KEY: str = Field(..., alias="GENAI_API_KEY")
     MODEL_GEN_AI: str = Field(default="gemma-4-31b-it", alias="MODEL_GEN_AI")
     MODEL_GROQ_AI: str = Field(default="qwen/qwen3.6-27b", alias="MODEL_GROQ_AI")
+    TOKEN_MAX_GROQ_AI: int = Field(default=50, alias="TOKEN_MAX_GROQ_AI")
     RES_DEFAULT: str = Field(default="i'm sorry", alias="RES_DEFAULT")
+    TEMPERATURE: float | int = Field(default=0.7, alias="TEMPERATURE")
 
     # GITHUB CONFIGS
     GITHUB_USERNAME: str = Field(..., alias="GITHUB_USERNAME")
