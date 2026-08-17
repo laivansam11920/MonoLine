@@ -40,7 +40,6 @@ class GenAIService(AIServices):
     @staticmethod
     def _config_ai() -> types.GenerateContentConfig:
         return types.GenerateContentConfig(
-            max_output_tokens=Config.TOKEN_MAX_GEN_AI,
             temperature=Config.TEMPERATURE,
         )
 
@@ -51,6 +50,9 @@ class GenAIService(AIServices):
             contents=self.prompt,
             config=self._config_ai(),
         )
+
+        if not interaction or not interaction.text:
+            return Config.RES_DEFAULT
         return interaction.text
 
 
@@ -81,4 +83,4 @@ try:
     ai = GenAIService()
 except Exception as e:
     print(e, flush=True)
-    ai = GroqAIServices()
+
