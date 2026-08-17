@@ -18,7 +18,6 @@ class AIServices(ABC):
         self.client: Any = client
         self.model: str = model
         self.prompt: str = prompt
-        self.error_return: str = Config.RES_DEFAULT
 
     @abstractmethod
     def __repr__(self) -> str:
