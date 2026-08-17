@@ -1,6 +1,5 @@
 # 1. Standard Library
 from abc import ABC, abstractmethod
-from logging import config
 from typing import Any
 
 # 2. Third-party
@@ -48,12 +47,12 @@ class GenAIService(AIServices):
 
     def get_response(self) -> str:
         try:
-            interaction = self.client.interactions.create(
+            interaction = self.client.models.generate_content(
                 model=self.model,
                 input=self.prompt,
                 config=self._config_ai()
             )
-            return interaction.output_text
+            return interaction.text
         except Exception as e:
             print(e, flush=True)
             return self.error_return
@@ -64,7 +63,6 @@ class GroqAIServices(AIServices):
         super().__init__(
             client=Groq(api_key=Config.GROQ_API_KEY), model=Config.MODEL_GROQ_AI
         )
-        self.role: str = Config.ROLE_AI
 
     def __repr__(self) -> str:
         return f"<GroqAIService(model={self.model})>"
@@ -73,9 +71,13 @@ class GroqAIServices(AIServices):
 
         completion = self.client.chat.completions.create(
             model=self.model,
-            messages=[{"role": self.role, "content": self.prompt}],
+            messages=[
+                {"role": "system", "content": self.prompt},
+                {"role": "user", "content": "Nói gì đó đi"}
+            ],
             temperature=Config.TEMPERATURE,
             max_tokens=Config.TOKEN_MAX_GROQ_AI,
+            stop=["\n", "Here's", "Thinking"],
         )
         return completion.choices[0].message.content
 
