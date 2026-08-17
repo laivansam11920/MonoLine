@@ -49,8 +49,11 @@ class GitServices:
 
             repo.git.config("user.name", self.name)
             repo.git.config("user.email", self.email)
-
-            self.ai_text = ai.get_response()
+            try:
+                self.ai_text = ai.get_response()
+            except Exception as e:
+                logger.error(e)
+                self.ai_text = ai.error_return
 
             content = self.file_path.read_text(encoding="utf-8")
 

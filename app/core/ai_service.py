@@ -46,16 +46,13 @@ class GenAIService(AIServices):
         )
 
     def get_response(self) -> str:
-        try:
-            interaction = self.client.models.generate_content(
-                model=self.model,
-                input=self.prompt,
-                config=self._config_ai()
-            )
-            return interaction.text
-        except Exception as e:
-            print(e, flush=True)
-            return self.error_return
+
+        interaction = self.client.models.generate_content(
+            model=self.model,
+            contents=self.prompt,
+            config=self._config_ai(),
+        )
+        return interaction.text
 
 
 class GroqAIServices(AIServices):
