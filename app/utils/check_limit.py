@@ -11,7 +11,7 @@ class CheckLimit:
     def __init__(self) -> None:
         self.debug_active: bool | None = None
 
-    def check(self, now: float | int) -> tuple[bool, int]:
+    def check(self, now: float | int) -> tuple:
 
         time_res_db = g.limit_data
 
@@ -20,7 +20,10 @@ class CheckLimit:
 
         self.debug_active: bool = time_res_db.get("debug", False)
 
-        if time_elapsed < Config.TIME_LIMIT and not (self.debug_active or Config.DEBUG):
+        if self.debug_active or Config.DEBUG:
+            return True, time_elapsed
+
+        if time_elapsed < Config.TIME_LIMIT:
             time_left: int = int(round(Config.TIME_LIMIT - time_elapsed, 0))
             return False, time_left
 

@@ -4,7 +4,6 @@ import re
 import shutil
 import time
 from uuid import uuid4, UUID
-from typing import Literal
 import tempfile
 import threading
 from pathlib import Path
@@ -38,7 +37,7 @@ class GitServices:
 
     def __repr__(self) -> str: ...
 
-    def git_auto(self) -> Literal[False] | Literal[True]:
+    def git_auto(self) -> bool:
         try:
 
             repo = git.Repo.clone_from(self.repo_url, self.local_dir)
