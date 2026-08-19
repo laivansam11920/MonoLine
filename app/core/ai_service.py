@@ -1,13 +1,10 @@
-# 1. Standard Library
 from abc import ABC, abstractmethod
 from typing import Any
 
-# 2. Third-party
 from google import genai
 from google.genai import types
 from groq import Groq
 
-# 3. Local/Internal
 from configs import Config
 from app.utils.logger import logger
 from app.utils.Prompts import SYSTEM_PROMPT

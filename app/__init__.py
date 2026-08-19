@@ -1,15 +1,12 @@
-# 1. Third-party
 from flask_limit import RateLimiter
 from flask import Flask, Response, g
 
-# 2. Local/Internal
 from configs import Config
 from app.core.git_automation import git_services
 from app.utils.check_limit import limit
 from app.database import db
 from app.utils.logger import logger
 
-# 3. Standard Library
 import time
 
 __all__ = ["create_app"]

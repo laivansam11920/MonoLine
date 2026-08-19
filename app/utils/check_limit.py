@@ -1,7 +1,5 @@
-# 1. Local/Internal
 from configs import Config
 
-# 2. Third-party
 from flask import g
 
 __all__ = ["limit"]
