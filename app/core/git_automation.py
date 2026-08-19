@@ -26,7 +26,6 @@ class GitServices:
         self.repo_url: str = (
             f"https://{self.token}@github.com/{self.name}/{self.name}.git"
         )
-        self.email: str = f"{self.name}@monoline.bot"
         self.id_commit: UUID | int = 0
         self.local_dir: str = tempfile.mkdtemp(prefix="monoline_")
         self.file_path: Path = Path(self.local_dir) / "README.md"
@@ -44,7 +43,7 @@ class GitServices:
                 return False
 
             repo.git.config("user.name", self.name)
-            repo.git.config("user.email", self.email)
+            repo.git.config("user.email", f"{self.name}@bot.monoline.com")
 
             try:
                 self.ai_text = ai.get_response()
