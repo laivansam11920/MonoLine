@@ -31,8 +31,6 @@ class GitServices:
         self.file_path: Path = Path(self.local_dir) / "README.md"
         self.ai_text: str = ""
 
-    def __repr__(self) -> str:
-        pass
 
     def git_auto(self) -> bool:
         try:
@@ -101,8 +99,6 @@ class UpdateGitDB(GitServices):
         super().__init__()
         self.time: float | int = 0
         self.success: bool = False
-
-    def __repr__(self) -> str: ...
 
     def _async_insert_log(self, data: dict[str, str | float | int]):
         try:
