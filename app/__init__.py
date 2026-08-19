@@ -7,8 +7,6 @@ from app.utils.check_limit import limit
 from app.database import db
 from app.utils.logger import logger
 
-import time
-
 __all__ = ["create_app"]
 
 
@@ -31,16 +29,8 @@ def create_app() -> Flask:
 
     @app.route("/")
     @limiter.rate_limit
+    @limit.check_limit
     def home() -> Response:
-
-        status, mes = limit.check(now=time.time())
-
-        if status:
-            return git_services.main()
-        return Response(
-            f"Skipped: Rate limit active ({mes}s left)",
-            mimetype="text/plain",
-            status=200,
-        )
+        return git_services.main()
 
     return app
