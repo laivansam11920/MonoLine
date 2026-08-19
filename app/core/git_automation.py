@@ -100,7 +100,7 @@ class UpdateGitDB(GitServices):
         self.time: float | int = 0
         self.success: bool = False
 
-    def _async_insert_log(self, data: dict[str, str | float | int]):
+    def _async_insert_log(self, data: dict):
         try:
             db.ai_res.insert_one(data)
             logger.info(
