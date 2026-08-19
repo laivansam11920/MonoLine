@@ -49,7 +49,7 @@ class GenAIService(AIServices):
 
         interaction = self.client.models.generate_content(
             model=self.model,
-            contents=self.prompt,
+            contents=f"System:{self.prompt} ||| Character limit:{Config.MAX_CHAR}",
             config=self._config_ai(),
         )
 
@@ -73,7 +73,7 @@ class GroqAIServices(AIServices):
             model=self.model,
             messages=[
                 {"role": "system", "content": self.prompt},
-                {"role": "user", "content": "Nói gì đó đi"}
+                {"role": "user", "content": f"Character limit: {Config.MAX_CHAR}"}
             ],
             temperature=Config.TEMPERATURE,
             reasoning_effort="low"

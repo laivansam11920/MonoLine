@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     TOKEN_MAX_GEN_AI: int = Field(default=200, alias="TOKEN_MAX_GEN_AI")
     RES_DEFAULT: str = Field(default="i'm sorry", alias="RES_DEFAULT")
     TEMPERATURE: float | int = Field(default=0.7, alias="TEMPERATURE")
+    MAX_CHAR: int = Field(default=10, alias="MAX_CHAR")
 
     # GITHUB CONFIGS
     GITHUB_USERNAME: str = Field(..., alias="GITHUB_USERNAME")

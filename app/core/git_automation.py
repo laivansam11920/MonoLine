@@ -1,4 +1,3 @@
-# 1. Standard Library
 import os
 import re
 import shutil
@@ -8,12 +7,10 @@ import tempfile
 import threading
 from pathlib import Path
 
-# 2. Third-party
 import git
 from flask import Response, g
 from git.exc import GitCommandError
 
-# 3. Local/Internal
 from app.core.ai_service import ai
 from app.database import db
 from app.utils.logger import logger
@@ -59,7 +56,7 @@ class GitServices:
 
             new_content, change_num = re.subn(
                 r"<!--start-->.*?<!--end-->",
-                lambda m: f"<!--start-->\n{self.ai_text}\n<!--end-->",
+                lambda _: f"<!--start-->\n{self.ai_text}\n<!--end-->",
                 content,
                 flags=re.DOTALL,
             )
