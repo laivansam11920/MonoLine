@@ -19,10 +19,6 @@ class AIServices(ABC):
         self.prompt: str = prompt
 
     @abstractmethod
-    def __repr__(self) -> str:
-        pass
-
-    @abstractmethod
     def get_response(self) -> str:
         pass
 
@@ -32,9 +28,6 @@ class GenAIService(AIServices):
         super().__init__(
             client=genai.Client(api_key=Config.GENAI_API_KEY), model=Config.MODEL_GEN_AI
         )
-
-    def __repr__(self) -> str:
-        return f"<GenAIService(model={self.model})>"
 
     @staticmethod
     def _config_ai() -> types.GenerateContentConfig:
@@ -61,25 +54,22 @@ class GroqAIServices(AIServices):
             client=Groq(api_key=Config.GROQ_API_KEY), model=Config.MODEL_GROQ_AI
         )
 
-    def __repr__(self) -> str:
-        return f"<GroqAIService(model={self.model})>"
-
     def get_response(self) -> str:
 
         completion = self.client.chat.completions.create(
             model=self.model,
             messages=[
                 {"role": "system", "content": self.prompt},
-                {"role": "user", "content": f"Character limit: {Config.MAX_CHAR}"}
+                {"role": "user", "content": f"Character limit:{Config.MAX_CHAR}"},
             ],
             temperature=Config.TEMPERATURE,
-            reasoning_effort="low"
+            reasoning_effort="low",
         )
         return completion.choices[0].message.content
+
 
 try:
     ai = GroqAIServices()
 except Exception as e:
     logger.error(e)
     ai = GenAIService()
-

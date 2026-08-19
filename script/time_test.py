@@ -1,6 +1,7 @@
 from time import time
 import functools
 
+
 def time_point(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):

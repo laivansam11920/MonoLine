@@ -31,7 +31,8 @@ class GitServices:
         self.file_path: Path = Path(self.local_dir) / "README.md"
         self.ai_text: str = ""
 
-    def __repr__(self) -> str: pass
+    def __repr__(self) -> str:
+        pass
 
     def git_auto(self) -> bool:
         try:
