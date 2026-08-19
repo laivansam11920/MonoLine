@@ -65,7 +65,16 @@ class GroqAIServices(AIServices):
             temperature=Config.TEMPERATURE,
             reasoning_effort="low",
         )
-        return completion.choices[0].message.content
+
+        if (
+                completion
+                and completion.choices
+                and len(completion.choices) > 0
+                and completion.choices[0].message
+                and completion.choices[0].message.content
+        ):
+            return completion.choices[0].message.content
+        return Config.RES_DEFAULT
 
 
 try:
