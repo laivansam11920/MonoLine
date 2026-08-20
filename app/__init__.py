@@ -1,5 +1,5 @@
 from flask_limit import RateLimiter
-from flask import Flask, Response, g
+from flask import Flask, Response
 
 from configs import Config
 from app.core.git_automation import git_services
@@ -16,20 +16,9 @@ def create_app() -> Flask:
     app.config.from_object(Config)
     limiter = RateLimiter(app)
 
-    @app.before_request
-    @limiter.rate_limit
-    def load_time_collection_data() -> None:
-
-        g.limit_data = (
-            db.time_limit.find_one(
-                {"username": Config.GITHUB_USERNAME},
-                {"_id": 0, "time_last_update": 1, "debug": 1},
-            )
-            or {}
-        )
-
     @app.route("/")
     @limiter.rate_limit
+    @Database.load_time_collection_data
     @limit.check_limit
     @Database.del_document
     def home() -> Response:
