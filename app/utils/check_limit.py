@@ -4,16 +4,16 @@ from flask import g, Response
 import time
 from functools import wraps
 
-__all__ = ["limit"]
+__all__ = ["Limit"]
 
 
-class limit:
+class Limit:
 
     @staticmethod
     def check_limit(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            is_allowed, time_left = limit.check(time.time())
+            is_allowed, time_left = Limit.check(time.time())
 
             if not is_allowed:
                 return Response(
