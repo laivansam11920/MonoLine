@@ -19,7 +19,7 @@ class limit:
                 return Response(
                     f"Skipped: Rate limit active ({time_left}s left)",
                     mimetype="text/plain",
-                    status=429,
+                    status=200,
                 )
 
             return func(*args, **kwargs)
