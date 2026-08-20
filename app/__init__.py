@@ -6,6 +6,7 @@ from app.core.git_automation import git_services
 from app.utils.check_limit import limit
 from app.database import db
 from app.utils.logger import logger
+from app.database import Database
 
 __all__ = ["create_app"]
 
@@ -30,6 +31,7 @@ def create_app() -> Flask:
     @app.route("/")
     @limiter.rate_limit
     @limit.check_limit
+    @Database.del_document
     def home() -> Response:
         return git_services.main()
 
