@@ -39,5 +39,10 @@ class Settings(BaseSettings):
     RATELIMITE_LIMIT: int = Field(default=500, alias="RATELIMITE_LIMIT")
     RATELIMIT_PERIOD: str = Field(default="5h", alias="RATELIMIT_PERIOD")
 
+    RENDER_EXTERNAL_URL: str = Field(default="", alias="RENDER_EXTERNAL_URL")
+
+    HOUR: int = Field(default=12, alias="HOUR")
+    MINUTE: int = Field(default=30, alias="MINUTE")
+
 
 Config = Settings()  # type: ignore

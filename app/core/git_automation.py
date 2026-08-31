@@ -6,7 +6,6 @@ import threading
 from pathlib import Path
 
 import git
-from flask import Response, g
 from git.exc import GitCommandError
 
 from app.core.ai_service import ai
@@ -96,23 +95,20 @@ class UpdateGitDB(GitServices):
     def _async_insert_log(data: dict):
         try:
             db.ai_res.insert_one(data)
-            logger.info(f"Background database record saved for commit ID: {data.get("id_commit")}")
+            logger.info(
+                f"Background database record saved for commit ID: {data.get("id_commit")}"
+            )
         except Exception as e:
             logger.error(f"Error in background insert log: {e}")
 
-    def main(self) -> Response:
+    def main(self) -> bool:
         status, id_commit, ai_text = self.git_auto()
         now = time.time()
         success = False
         try:
 
             if not status:
-
-                return Response(
-                    f"Failed to update repository: Check server logs for details.",
-                    mimetype="text/plain",
-                    status=500,
-                )
+                return False
 
             log_data = {
                 "username": self.name,
@@ -126,18 +122,14 @@ class UpdateGitDB(GitServices):
             ).start()
 
             success = True
-            return Response("Done to update text", mimetype="text/plain", status=200)
+            return True
         except Exception as e:
             success = False
             logger.error(
                 f"Internal server error in main process (ID: {id_commit}). Details: {e}"
             )
 
-            return Response(
-                "Internal server error during the update process.",
-                mimetype="text/plain",
-                status=500,
-            )
+            return False
         finally:
             if success:
                 db.time_limit.update_one(
@@ -145,7 +137,6 @@ class UpdateGitDB(GitServices):
                     {
                         "$set": {
                             "time_last_update": now,
-                            "debug": g.limit_data.get("debug", False),
                         }
                     },
                     upsert=True,
