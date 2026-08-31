@@ -1,5 +1,4 @@
 import re
-import time
 from uuid import uuid4, UUID
 import tempfile
 import threading
@@ -103,8 +102,6 @@ class UpdateGitDB(GitServices):
 
     def main(self) -> bool:
         status, id_commit, ai_text = self.git_auto()
-        now = time.time()
-        success = False
         try:
 
             if not status:
@@ -114,33 +111,18 @@ class UpdateGitDB(GitServices):
                 "username": self.name,
                 "id_commit": str(id_commit),
                 "message": ai_text,
-                "time": now,
             }
 
             threading.Thread(
                 target=UpdateGitDB._async_insert_log, args=(log_data,)
             ).start()
 
-            success = True
             return True
         except Exception as e:
-            success = False
             logger.error(
                 f"Internal server error in main process (ID: {id_commit}). Details: {e}"
             )
 
             return False
-        finally:
-            if success:
-                db.time_limit.update_one(
-                    {"username": self.name},
-                    {
-                        "$set": {
-                            "time_last_update": now,
-                        }
-                    },
-                    upsert=True,
-                )
-
 
 git_services = UpdateGitDB()
