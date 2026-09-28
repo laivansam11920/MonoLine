@@ -11,7 +11,6 @@ def create_app() -> Flask:
 
     @app.route("/ping")
     def ping():
-        print("pong", flush=True)
         return {"ping": "pong"}
 
     return app
