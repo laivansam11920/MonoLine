@@ -1,10 +1,6 @@
 from flask import Flask
 
 from configs import Config
-from app.core.git_automation import git_services
-from app.database import db
-from app.utils.logger import logger
-from app.database import Database
 
 __all__ = ["create_app"]
 
