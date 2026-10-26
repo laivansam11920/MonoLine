@@ -7,12 +7,12 @@ from pathlib import Path
 import git
 from git.exc import GitCommandError
 
-from app.core.ai_service import ai
+from app.core.ai_service import get_ai, AIServices
 from app.database import db
 from app.utils.logger import logger
 from configs import Config
 
-__all__ = ["git_services"]
+__all__ = ["get_git_services", "UpdateGitDB"]
 
 
 class GitServices:
@@ -23,7 +23,9 @@ class GitServices:
             f"https://{self.token}@github.com/{self.name}/{self.name}.git"
         )
 
-    def git_auto(self):
+    def git_auto(self) -> tuple:
+
+        ai: AIServices = get_ai()
 
         try:
             ai_text = ai.get_response()
@@ -50,11 +52,10 @@ class GitServices:
 
                 content = file_path.read_text(encoding="utf-8")
 
-                new_content, change_num = re.subn(
-                    r"<!--start-->.*?<!--end-->",
+                pattern = re.compile(r"<!--start-->.*?<!--end-->", flags=re.DOTALL)
+                new_content, change_num = pattern.subn(
                     lambda _: f"<!--start-->\n{ai_text}\n<!--end-->",
                     content,
-                    flags=re.DOTALL,
                 )
 
                 if change_num == 0:
@@ -125,4 +126,10 @@ class UpdateGitDB(GitServices):
 
             return False
 
-git_services = UpdateGitDB()
+git_services: UpdateGitDB | None = None
+
+def get_git_services():
+    global git_services
+    if git_services is None:
+        git_services = UpdateGitDB()
+    return git_services

@@ -9,7 +9,7 @@ from configs import Config
 from app.utils.logger import logger
 from app.utils.Prompts import SYSTEM_PROMPT
 
-__all__ = ["ai"]
+__all__ = ["get_ai", "AIServices"]
 
 
 class AIServices(ABC):
@@ -39,7 +39,7 @@ class GenAIService(AIServices):
 
         interaction = self.client.models.generate_content(
             model=self.model,
-            contents=f"System:{self.prompt} ||| Character limit:{Config.MAX_CHAR}",
+            contents=f"System: {self.prompt}", # ||| Character limit:{Config.MAX_CHAR}",
             config=self._config_ai(),
         )
 
@@ -60,7 +60,7 @@ class GroqAIServices(AIServices):
             model=self.model,
             messages=[
                 {"role": "system", "content": self.prompt},
-                {"role": "user", "content": f"Character limit:{Config.MAX_CHAR}"},
+                {"role": "user", "content": f""}, #Character limit:{Config.MAX_CHAR}
             ],
             temperature=Config.TEMPERATURE,
             reasoning_effort="low",
@@ -77,8 +77,14 @@ class GroqAIServices(AIServices):
         return Config.RES_DEFAULT
 
 
-try:
-    ai = GroqAIServices()
-except Exception as e:
-    logger.error(e)
-    ai = GenAIService()
+_ai: AIServices | None = None
+
+def get_ai() -> AIServices:
+    global _ai
+    if _ai is None:
+        try:
+            _ai = GroqAIServices()
+        except Exception as e:
+            logger.error(e)
+            _ai = GenAIService()
+    return _ai
